@@ -196,12 +196,10 @@ const MobileMenu = ({ isOpen, setIsOpen, ease = 'power3.out' }) => {
 
             <div
                 ref={menuRef}
-                className="fixed top-0 right-0 h-full w-3/4 max-w-sm bg-white shadow-2xl z-50 p-6 md:hidden overflow-y-auto"
+                className="fixed top-16 right-0 h-[calc(100%-4rem)] w-1/3 max-w-sm bg-white shadow-2xl z-50 p-15 md:hidden overflow-y-auto rounded-tl-2xl"
                 style={{ willChange: 'transform, opacity' }}
             >
-                <div className="flex justify-end mb-10">
-                    <MobileToggle isOpen={isOpen} toggleOpen={() => setIsOpen(false)} />
-                </div>
+
                 
                 <nav className="flex flex-col gap-4">
                     <ul
