@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="CatalogService.Api/CatalogService.Api.csproj" Id="c86462e2-df87-445c-bb60-5c0cc1423092" />
   <Project Path="D:/ProgrammingProjects/Dot_Net_Projects/ECOMMERCEAPI/ECOMMERCEAPI/AuthServices.Api/AuthServices.Api.csproj" Id="ef25b0c7-7a20-4c7b-9417-307edba9c692" />
+  <Project Path="GlobalResponse.Shared/GlobalResponse.Shared.csproj" Id="41d3ce37-ad9c-40c4-85ad-86071c8ceda2" />
 </Solution>
