@@ -3,6 +3,8 @@ import "./globals.css";
 import NavBar from "./components/sections/Navbar";
 import Footer from "./components/sections/Footer";
 import Providers from "./providers/Providers";
+import ReactQueryProvider from "../providers/ReactQueryProvider";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -18,11 +20,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={poppins.variable}>
-      <body className="antialiased font-poppins">
-        <Providers>
-          <NavBar />
-          <main>{children}</main>
-          <Footer />
+     <body className="antialiased font-poppins">
+        <Providers> {/* CartProvider */}
+          <ReactQueryProvider> {/* React Query Provider */}
+            <NavBar />
+            <main>{children}</main>
+            <Footer />
+          </ReactQueryProvider>
         </Providers>
       </body>
     </html>

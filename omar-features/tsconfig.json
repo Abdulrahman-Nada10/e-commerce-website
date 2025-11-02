@@ -32,7 +32,7 @@
     "**/*.tsx",
     ".next\\dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
-  ],
+, "app/auth/login/page.jsx", "app/components/Ui/DefaultButton.jsx"  ],
   "exclude": [
     "node_modules"
   ]
