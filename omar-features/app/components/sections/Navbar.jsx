@@ -5,8 +5,8 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ShoppingCart, User } from 'lucide-react';
-import MobileToggle from './MobileToggle';
-import MobileMenu from './MobileMenu';
+import MobileToggle from '../features/MobileToggle';
+import MobileMenu from '../features/MobileMenu';
 const navItems = [
   { name: 'Products', href: '/products' },
   { name: 'About', href: '/about' },

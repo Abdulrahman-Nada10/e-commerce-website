@@ -1,16 +1,22 @@
-import Image from "next/image";
-export default function Home() {
-  
-  return (
-   <>
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to <span className="text-blue-400">Next.js!</span>
-        </h1>
-        </main>
-        </div>
+// app/page.js
+// This remains a Server Component by default
 
-   </>
-  );
+import Header from './components/sections/Header' 
+import CategoryIconsSection from './components/sections/CategoryIconsSection';
+import ExclusiveOffersSection from './components/sections/ExclusiveOffersSection';
+
+export default function Home() {
+  
+  return (
+    <main className="flex flex-col min-h-screen bg-[#ffffff] text-[#060010]">
+      
+      <Header/>
+      
+      <CategoryIconsSection/>
+      
+       <ExclusiveOffersSection/>
+
+
+    </main>
+  );
 }

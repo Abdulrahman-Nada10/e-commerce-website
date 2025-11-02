@@ -71,21 +71,7 @@ const Footer = () => {
           <p className="text-white/50 font-normal mb-3 md:mb-0 font-['Poppins']">
             &copy; {new Date().getFullYear()} Shopylx. All rights reserved.
           </p>
-          
-          <div className="flex items-center space-x-2 text-white/40 font-normal font-['Poppins']">
-            <p>Powered by:</p>
-            <div className="flex space-x-3">
-              <span className="font-semibold text-white/70 hover:text-[#4EC5F5] transition">Next.js</span>
-              <span className="font-semibold text-white/70 hover:text-[#4EC5F5] transition">Tailwind</span>
-              <span className="font-semibold text-white/70 hover:text-[#4EC5F5] transition">JSX</span>
-
-              <motion.span whileHover={{ rotate: 5, scale: 1.1 }} className="hover:text-[#4EC5F5]" aria-label="Lucide-react">
-                 <ShoppingBag size={18} />
-              </motion.span>
-              <span className="font-semibold text-white/70 hover:text-[#4EC5F5] transition">Framer Motion</span>
-            </div>
-          </div>
-
+               
         </div>
       </div>
     </footer>
