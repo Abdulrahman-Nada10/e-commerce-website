@@ -28,7 +28,7 @@ const MobileToggle = ({ isOpen, toggleOpen, ease = 'power3.easeOut' }) => {
             onClick={toggleOpen}
             aria-label="Toggle menu"
             aria-expanded={isOpen}
-            className="flex flex-col items-center justify-center gap-1.5 cursor-pointer p-2 relative rounded-lg transition-colors duration-200 hover:bg-gray-100 z-50 focus:outline-none" // 💡 تم تعديل gap
+            className="flex flex-col items-center justify-center gap-1.5 cursor-pointer p-2 relative rounded-lg transition-colors duration-200 hover:bg-gray-100 z-50 focus:outline-none" 
             style={{ width: '40px', height: '40px' }}
         >
             <span

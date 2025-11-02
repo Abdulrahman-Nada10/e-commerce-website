@@ -1,20 +1,30 @@
 // components/sections/Header.jsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import AnimatedBackground from '../gsap/AnimatedBackground';
-import GlowPillButton from '../gsap/GlowPillButton';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import AnimatedBackground from "../gsap/AnimatedBackground";
+import GlowPillButton from "../gsap/GlowPillButton";
 
-const baseColor = '#4EC5F5';
-const changingWords = ["QUALITY", "FURNITURE", "COMFORT", "DESIGN", "STYLE", "LUXURY", "AESTHETICS"];
+const baseColor = "#4EC5F5";
+const changingWords = [
+  "QUALITY",
+  "FURNITURE",
+  "COMFORT",
+  "DESIGN",
+  "STYLE",
+  "LUXURY",
+  "AESTHETICS",
+];
 
 const Header = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % changingWords.length);
+      setCurrentWordIndex(
+        (prevIndex) => (prevIndex + 1) % changingWords.length
+      );
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -26,13 +36,15 @@ const Header = () => {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
   };
 
   return (
-    <header
-      className="relative w-full min-h-[80vh] md:min-h-[90vh] lg:min-h-100vh flex flex-col items-center justify-center overflow-hidden font-['Poppins'] bg-[#E0F7FA] px-4 sm:px-8 md:px-12 py-16"
-    >
+    <header className="relative w-full min-h-[70vh] md:min-h-[70vh] lg:min-h-70vh flex flex-col items-center justify-center overflow-hidden font-['Poppins'] bg-[#E0F7FA] px-4 sm:px-8 md:px-12 py-16">
       <AnimatedBackground />
 
       <motion.div

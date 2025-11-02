@@ -9,6 +9,19 @@ const nextConfig = {
                 port: '',
                 pathname: '/img/**', // المسار الافتراضي لصور Fake Store API
             },
+            {
+                protocol: 'https',
+                hostname: 'images.pexels.com',
+                port: '',
+                // استخدام '**' للسماح بأي مسار خلف اسم المضيف
+                pathname: '**', 
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.pravatar.cc', // اسم المضيف الجديد
+                port: '',
+                pathname: '**', 
+            },
         ],
     },
 };

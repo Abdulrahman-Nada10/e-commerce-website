@@ -2,7 +2,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/sections/Navbar";
 import Footer from "./components/sections/Footer";
-
+import Providers from "./providers/Providers";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -11,16 +11,19 @@ const poppins = Poppins({
 
 export const metadata = {
   title: "E-commerce Website",
-  description: "A modern e-commerce website built with Next.js and Tailwind CSS.",
+  description:
+    "A modern e-commerce website built with Next.js and Tailwind CSS.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={poppins.variable}>
       <body className="antialiased font-poppins">
-        <NavBar/>
-        {children}
-        <Footer/>
+        <Providers>
+          <NavBar />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

@@ -1,16 +1,20 @@
 // components/Navbar.jsx
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { gsap } from 'gsap';
-import { ShoppingCart, User } from 'lucide-react';
-import MobileToggle from '../features/MobileToggle';
-import MobileMenu from '../features/MobileMenu';
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { gsap } from "gsap";
+import { ShoppingCart, User } from "lucide-react";
+import MobileToggle from "../features/MobileToggle";
+import MobileMenu from "../features/MobileMenu";
+import { useRouter } from "next/navigation";
+import { useCart } from "../../context/CartContext";
 const navItems = [
-  { name: 'Products', href: '/products' },
-  { name: 'About', href: '/about' },
-  { name: 'Profile', href: '/profile' },
+  { name: "Products", href: "/products" },
+  { name: "About", href: "/about" },
+  { name: "Profile", href: "/profile" },
+  { name: "Help", href: "/help" },
+
 ];
 
 const NavLink = ({ href, children }) => {
@@ -20,10 +24,10 @@ const NavLink = ({ href, children }) => {
   const hoverLabelRef = useRef(null);
   const tlRef = useRef(null);
   const activeTweenRef = useRef(null);
-  
-  const baseColor = '#4EC5F5'; 
-  const pillColor = '#ffffff';   
-  const textColor = '#060010'; 
+
+  const baseColor = "#4EC5F5";
+  const pillColor = "#ffffff";
+  const textColor = "#060010";
 
   const calculatePillDimensions = () => {
     const pill = linkRef.current;
@@ -32,10 +36,11 @@ const NavLink = ({ href, children }) => {
 
     const rect = pill.getBoundingClientRect();
     const { width: w, height: h } = rect;
-    
+
     const R = ((w * w) / 4 + h * h) / (2 * h);
     const D = Math.ceil(2 * R) + 2;
-    const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
+    const delta =
+      Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
     const originY = D - delta;
 
     circle.style.width = `${D}px`;
@@ -45,7 +50,7 @@ const NavLink = ({ href, children }) => {
     gsap.set(circle, {
       xPercent: -50,
       scale: 0,
-      transformOrigin: `50% ${originY}px`
+      transformOrigin: `50% ${originY}px`,
     });
 
     const label = labelRef.current;
@@ -57,15 +62,39 @@ const NavLink = ({ href, children }) => {
     tlRef.current?.kill();
     const tl = gsap.timeline({ paused: true });
 
-    tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease: 'power3.easeOut', overwrite: 'auto' }, 0);
-    
+    tl.to(
+      circle,
+      {
+        scale: 1.2,
+        xPercent: -50,
+        duration: 2,
+        ease: "power3.easeOut",
+        overwrite: "auto",
+      },
+      0
+    );
+
     if (label) {
-      tl.to(label, { y: -(h + 8), duration: 2, ease: 'power3.easeOut', overwrite: 'auto' }, 0);
+      tl.to(
+        label,
+        { y: -(h + 8), duration: 2, ease: "power3.easeOut", overwrite: "auto" },
+        0
+      );
     }
 
     if (hoverLabel) {
-      gsap.set(hoverLabel, { y: h + 8, opacity: 0 }); 
-      tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease: 'power3.easeOut', overwrite: 'auto' }, 0);
+      gsap.set(hoverLabel, { y: h + 8, opacity: 0 });
+      tl.to(
+        hoverLabel,
+        {
+          y: 0,
+          opacity: 1,
+          duration: 2,
+          ease: "power3.easeOut",
+          overwrite: "auto",
+        },
+        0
+      );
     }
 
     tlRef.current = tl;
@@ -74,8 +103,8 @@ const NavLink = ({ href, children }) => {
   useEffect(() => {
     calculatePillDimensions();
     const onResize = () => calculatePillDimensions();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   const handleEnter = () => {
@@ -84,8 +113,8 @@ const NavLink = ({ href, children }) => {
     activeTweenRef.current?.kill();
     activeTweenRef.current = tl.tweenTo(tl.duration(), {
       duration: 0.7,
-      ease: 'power3.easeOut',
-      overwrite: 'auto'
+      ease: "power3.easeOut",
+      overwrite: "auto",
     });
   };
 
@@ -95,26 +124,26 @@ const NavLink = ({ href, children }) => {
     activeTweenRef.current?.kill();
     activeTweenRef.current = tl.tweenTo(0, {
       duration: 0.4,
-      ease: 'power3.easeOut',
-      overwrite: 'auto'
+      ease: "power3.easeOut",
+      overwrite: "auto",
     });
   };
 
-  const isLinkActive = false; 
+  const isLinkActive = false;
 
   const pillStyle = {
     background: isLinkActive ? baseColor : pillColor,
-    color: isLinkActive ? pillColor : textColor, 
-    height: '42px',
-    paddingLeft: '18px',
-    paddingRight: '18px',
+    color: isLinkActive ? pillColor : textColor,
+    height: "42px",
+    paddingLeft: "18px",
+    paddingRight: "18px",
   };
-  
+
   const basePillClasses =
-    'relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-none uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0 transition-colors duration-200';
+    "relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-none uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0 transition-colors duration-200";
 
   return (
-    <div className="flex h-full" style={{ gap: '3px' }}>
+    <div className="flex h-full" style={{ gap: "3px" }}>
       <Link
         ref={linkRef}
         href={href}
@@ -125,24 +154,22 @@ const NavLink = ({ href, children }) => {
       >
         <span
           className="hover-circle absolute left-1/2 bottom-0 rounded-full z-1 block pointer-events-none"
-          style={{ background: baseColor, willChange: 'transform' }}
+          style={{ background: baseColor, willChange: "transform" }}
           aria-hidden="true"
           ref={circleRef}
         />
-        
-        <span 
-            className="label-stack relative inline-block leading-none z-2 overflow-hidden h-[1em]"
-        >
+
+        <span className="label-stack relative inline-block leading-none z-2 overflow-hidden h-[1em]">
           <span
             className="pill-label relative z-2 inline-block leading-none"
-            style={{ willChange: 'transform' }}
+            style={{ willChange: "transform" }}
             ref={labelRef}
           >
             {children}
           </span>
           <span
             className="pill-label-hover absolute left-0 top-0 z-3 inline-block"
-            style={{ color: textColor, willChange: 'transform, opacity' }}
+            style={{ color: textColor, willChange: "transform, opacity" }}
             aria-hidden="true"
             ref={hoverLabelRef}
           >
@@ -154,35 +181,34 @@ const NavLink = ({ href, children }) => {
   );
 };
 
-
-
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navRef = useRef(null); 
-  const baseColor = '#4EC5F5'; 
+  const navRef = useRef(null);
+  const baseColor = "#4EC5F5";
+  const { cartItemCount } = useCart();
 
   useEffect(() => {
     const navWrapperEl = navRef.current;
     if (navWrapperEl) {
       gsap.set(navWrapperEl, { opacity: 0, y: -20 });
-      gsap.to(navWrapperEl, { 
-        opacity: 1, 
-        y: 0, 
-        duration: 2, 
-        ease: 'elastic.out(1, 0.7)', 
-        delay: 0.2
+      gsap.to(navWrapperEl, {
+        opacity: 1,
+        y: 0,
+        duration: 2,
+        ease: "elastic.out(1, 0.7)",
+        delay: 0.2,
       });
     }
   }, []);
 
-  const IconButton = ({ children, ariaLabel, className = "", }) => (
-  <button
-    className={`p-2 rounded-full transition-colors hover:bg-gray-100 focus:outline-none ${className}`}
-    aria-label={ariaLabel}
-  >
-    {children}
-  </button>
-);
+  const IconButton = ({ children, ariaLabel, className = "" }) => (
+    <button
+      className={`p-2 rounded-full transition-colors hover:bg-gray-100 focus:outline-none ${className}`}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </button>
+  );
 
   return (
     <>
@@ -192,12 +218,11 @@ const NavBar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-
             <div className="shrink-0 order-1 md:order-0">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-2xl font-extrabold tracking-wider"
-                style={{ color: baseColor }} 
+                style={{ color: baseColor }}
               >
                 Shopylx
               </Link>
@@ -205,39 +230,51 @@ const NavBar = () => {
 
             <div
               className="hidden md:flex grow justify-center space-x-0 ml-2 rounded-[27px] overflow-hidden"
-              style={{ height: '48px', background: '#ffffff' }} 
+              style={{ height: "48px", background: "#ffffff" }}
             >
-              <div className="list-none flex items-stretch m-0 p-[3px] h-full" style={{ gap: '3px' }}>
+              <div
+                className="list-none flex items-stretch m-0 p-[3px] h-full"
+                style={{ gap: "3px" }}
+              >
                 {navItems.map((item) => (
-                    <NavLink key={item.name} href={item.href}>
-                      {item.name}
-                    </NavLink>
+                  <NavLink key={item.name} href={item.href}>
+                    {item.name}
+                  </NavLink>
                 ))}
               </div>
             </div>
 
             <div className="flex items-center space-x-1 order-2 md:order-0">
-              <IconButton ariaLabel="Cart"
-              >
-                <ShoppingCart className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600"
-                />
+              <IconButton ariaLabel="Cart">
+                <Link href="/cart" className="relative">
+                  <ShoppingCart className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
+                </Link>
               </IconButton>
-              
-              <IconButton ariaLabel="User Profile" className="hidden md:inline-flex">
+
+              <IconButton
+                ariaLabel="User Profile"
+                className="hidden md:inline-flex"
+              >
                 <User className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
               </IconButton>
 
               <div className="md:hidden ml-2">
-                <MobileToggle isOpen={isMobileMenuOpen} toggleOpen={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+                <MobileToggle
+                  isOpen={isMobileMenuOpen}
+                  toggleOpen={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
               </div>
             </div>
-
           </div>
         </div>
       </nav>
       <MobileMenu isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
     </>
-
   );
 };
 

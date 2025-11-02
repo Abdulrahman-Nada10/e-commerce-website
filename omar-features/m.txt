@@ -1,0 +1,33 @@
+{/* زر الاتجاه لليسار */}
+<button
+  onClick={() => scroll('left')}
+  className="absolute z-10 top-1/2 -translate-y-1/2 left-1 sm:-left-2 md:-left-3 
+             flex items-center justify-center 
+             rounded-full shadow-md hover:shadow-xl 
+             transition-all duration-300 hover:scale-105
+             w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+  style={{ backgroundColor: ACCENT_COLOR, color: TEXT_COLOR }}
+>
+  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+</button>
+
+{/* زر الاتجاه لليمين */}
+<button
+  onClick={() => scroll('right')}
+  className="absolute z-10 top-1/2 -translate-y-1/2 right-1 sm:-right-2 md:-right-3 
+             flex items-center justify-center 
+             rounded-full shadow-md hover:shadow-xl 
+             transition-all duration-300 hover:scale-105
+             w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+  style={{ backgroundColor: ACCENT_COLOR, color: TEXT_COLOR }}
+>
+  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+</button>
+
+
+
+ className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 
+             font-bold mb-6 sm:mb-8 md:mb-10 
+             text-left uppercase tracking-wide 
+             leading-tight"
+>
