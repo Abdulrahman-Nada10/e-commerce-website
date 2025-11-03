@@ -1,7 +1,8 @@
 // sections/CategoryIconsSection.jsx
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useProducts } from "../../context/ProductContext";
 import {
   Sofa,
   Armchair,
@@ -19,58 +20,109 @@ const ACCENT_COLOR = "#4EC5F5";
 const TEXT_COLOR = "#060010";
 const SECTION_BG = "#ffffff";
 
-const FURNITURE_CATEGORIES = [
-  { name: "Living Room", icon: Sofa, slug: "living-room" },
-  { name: "Dining Tables", icon: Table, slug: "dining-tables" },
-  { name: "Office Chairs", icon: Armchair, slug: "office-chairs" },
-  { name: "Lighting", icon: Lamp, slug: "lighting" },
-  { name: "Bed & Bath", icon: Bed, slug: "bed-bath" },
-  { name: "Home Decor", icon: PaintBucket, slug: "home-decor" },
-  { name: "Office Desks", icon: Monitor, slug: "office-desks" },
-  { name: "Shelving", icon: BookOpen, slug: "shelving" },
-  { name: "Storage Solutions", icon: Box, slug: "storage" },
-  { name: "Kitchen Appliances", icon: Microwave, slug: "kitchen-appliances" },
-];
-
-const REPEATED_CATEGORIES = [
-  ...FURNITURE_CATEGORIES,
-  ...FURNITURE_CATEGORIES,
-  ...FURNITURE_CATEGORIES,
-];
-
 const CategoryIconsSection = () => {
-  const CategoryItem = ({ category, index }) => (
-    <a
-      key={index}
-      href={`/categories/${category.slug}`}
-      className="category-icon-item flex flex-col items-center group shrink-0 w-[150px] text-center cursor-pointer transition-colors duration-300 mx-4"
-    >
-      <div
-        className={`
-                    w-20 h-20 md:w-24 md:h-24 flex items-center justify-center rounded-full border-2 border-gray-200 transition-all duration-300 mb-2 
-                    relative bg-[#f7f7f7] shadow-md 
-                    group-hover:border-[${ACCENT_COLOR}] 
-                    /* ✅ FIX: إزالة المسافات السفلية (_) لتهدئة تحذير IntelliSense */
-                    group-hover:shadow-[0_0_8px_var(--tw-glow-color),0_0_20px_var(--tw-glow-color),0_0_30px_rgba(78,197,245,0.7)]
-                `}
-        style={{
-          "--tw-glow-color": ACCENT_COLOR,
-        }}
-      >
-        <category.icon
-          className={`
-                        w-8 h-8 md:w-10 md:h-10 transition-colors duration-300 
-                        text-[${ACCENT_COLOR}] /* ✅ إعادة ضبط اللون الأصلي */
-                        group-hover:text-[${TEXT_COLOR}]
-                    `}
-        />
-      </div>
+  const { categories } = useProducts();
+  const [apiCategories, setApiCategories] = useState([]);
 
-      <p className="text-sm font-semibold transition-colors duration-300 group-hover:text-gray-700 whitespace-normal">
-        {category.name}
-      </p>
-    </a>
-  );
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("https://localhost:7118/api/Categories?languageCode=ar&search=Living%20Room&isActive=true");
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          setApiCategories(data.data);
+        } else {
+          setApiCategories([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        // Fallback to mock data matching API structure
+        const fallbackCategories = [
+          {
+            categoryID: 1,
+            title: "غرفة المعيشة",
+            description: "مجموعة واسعة من أثاث غرفة المعيشة لتوفير الراحة والخصوصية",
+            icon: "fa-solid fa-couch",
+            isActive: true,
+            displayOrder: 1,
+            createdAt: "2025-11-03T00:30:06.387"
+          }
+        ];
+        setApiCategories(fallbackCategories);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Icon mapping based on category title or icon field
+  const getIconForCategory = (category) => {
+    // First try to map by title
+    const titleIconMap = {
+      "غرفة المعيشة": Sofa,
+      "Living Room": Sofa,
+      "Dining Tables": Table,
+      "Office Chairs": Armchair,
+      "Lighting": Lamp,
+      "Bed & Bath": Bed,
+      "Home Decor": PaintBucket,
+      "Office Desks": Monitor,
+      "Shelving": BookOpen,
+      "Storage Solutions": Box,
+      "Kitchen Appliances": Microwave,
+    };
+
+    // Check title first
+    if (category.title && titleIconMap[category.title]) {
+      return titleIconMap[category.title];
+    }
+
+    // Fallback to Sofa
+    return Sofa;
+  };
+
+  const REPEATED_CATEGORIES = [
+    ...apiCategories,
+    ...apiCategories,
+    ...apiCategories,
+  ];
+
+  const CategoryItem = ({ category, index }) => {
+    const IconComponent = getIconForCategory(category);
+
+    return (
+      <a
+        key={index}
+        href={`/categories/${category.categoryID}`}
+        className="category-icon-item flex flex-col items-center group shrink-0 w-[150px] text-center cursor-pointer transition-colors duration-300 mx-4"
+      >
+        <div
+          className={`
+                      w-20 h-20 md:w-24 md:h-24 flex items-center justify-center rounded-full border-2 border-gray-200 transition-all duration-300 mb-2 
+                      relative bg-[#f7f7f7] shadow-md 
+                      group-hover:border-[${ACCENT_COLOR}] 
+                      /* ✅ FIX: إزالة المسافات السفلية (_) لتهدئة تحذير IntelliSense */
+                      group-hover:shadow-[0_0_8px_var(--tw-glow-color),0_0_20px_var(--tw-glow-color),0_0_30px_rgba(78,197,245,0.7)]
+                  `}
+          style={{
+            "--tw-glow-color": ACCENT_COLOR,
+          }}
+        >
+          <IconComponent
+            className={`
+                          w-8 h-8 md:w-10 md:h-10 transition-colors duration-300 
+                          text-[${ACCENT_COLOR}] /* ✅ إعادة ضبط اللون الأصلي */
+                          group-hover:text-[${TEXT_COLOR}]
+                      `}
+          />
+        </div>
+
+        <p className="text-sm font-semibold transition-colors duration-300 group-hover:text-gray-700 whitespace-normal">
+          {category.title}
+        </p>
+      </a>
+    );
+  };
 
   return (
     <section
