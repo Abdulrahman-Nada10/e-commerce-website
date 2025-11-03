@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import NavBar from "./components/sections/Navbar";
+import {NavBar} from "./components/sections/Navbar";
 import Footer from "./components/sections/Footer";
 import Providers from "./providers/Providers";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
