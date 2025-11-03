@@ -24,6 +24,7 @@ const NavLink = ({ href, children }) => {
   const hoverLabelRef = useRef(null);
   const tlRef = useRef(null);
   const activeTweenRef = useRef(null);
+  
 
   const baseColor = "#4EC5F5";
   const pillColor = "#ffffff";
@@ -142,6 +143,7 @@ const NavLink = ({ href, children }) => {
   const basePillClasses =
     "relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-none uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0 transition-colors duration-200";
 
+    
   return (
     <div className="flex h-full" style={{ gap: "3px" }}>
       <Link
@@ -186,6 +188,7 @@ const NavBar = () => {
   const navRef = useRef(null);
   const baseColor = "#4EC5F5";
   const { cartItemCount } = useCart();
+  
 
   useEffect(() => {
     const navWrapperEl = navRef.current;
@@ -259,8 +262,13 @@ const NavBar = () => {
               <IconButton
                 ariaLabel="User Profile"
                 className="hidden md:inline-flex"
+               
+                
               >
+                <Link href="/profile" className="relative">
                 <User className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
+                </Link>
+                
               </IconButton>
 
               <div className="md:hidden ml-2">
