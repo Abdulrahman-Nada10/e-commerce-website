@@ -86,7 +86,7 @@ export const ProductProvider = ({ children }) => {
           price: Math.floor(Math.random() * 100) + 10,
           description: `Description for product ${index + 1}`,
           category: fallbackCategories[Math.floor(index / 2) % fallbackCategories.length].title,
-          image: '/placeholder.png',
+          image: '/images/placeholder.jpg',
           active: Math.random() > 0.5,
           stock: Math.floor(Math.random() * 100) + 1,
           discount: Math.floor(Math.random() * 50),

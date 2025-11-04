@@ -129,12 +129,12 @@ const AddEditProductPage = () => {
     }
 
     setTimeout(() => {
-      router.push('/ProductsManager');
+      router.push('/ProductsManagement');
     }, 2000);
   };
 
   const handleCancel = () => {
-    router.push('/ProductsManager');
+    router.push('/ProductsManagement');
   };
 
   const previewProduct = {
@@ -143,7 +143,7 @@ const AddEditProductPage = () => {
     price: parseFloat(formData.price) || 0,
     discount: parseFloat(formData.discount) || 0,
     description: formData.description || 'Product description',
-    image: formData.images[0]?.url || '/placeholder.png',
+    image: formData.images[0]?.url || '/images/placeholder.jpg',
   };
 
   if (loading) {

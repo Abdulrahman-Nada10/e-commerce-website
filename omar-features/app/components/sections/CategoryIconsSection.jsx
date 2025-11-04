@@ -28,6 +28,9 @@ const CategoryIconsSection = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch("https://localhost:7118/api/Categories?languageCode=ar&search=Living%20Room&isActive=true");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         if (data.success && data.data) {
@@ -36,7 +39,7 @@ const CategoryIconsSection = () => {
           setApiCategories([]);
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        console.warn("Failed to fetch categories from API, using fallback data:", error);
         // Fallback to mock data matching API structure
         const fallbackCategories = [
           {
@@ -46,6 +49,24 @@ const CategoryIconsSection = () => {
             icon: "fa-solid fa-couch",
             isActive: true,
             displayOrder: 1,
+            createdAt: "2025-11-03T00:30:06.387"
+          },
+          {
+            categoryID: 2,
+            title: "غرفة النوم",
+            description: "أثاث غرفة النوم المريح والأنيق",
+            icon: "fa-solid fa-bed",
+            isActive: true,
+            displayOrder: 2,
+            createdAt: "2025-11-03T00:30:06.387"
+          },
+          {
+            categoryID: 3,
+            title: "المطبخ",
+            description: "أدوات وأثاث المطبخ الحديث",
+            icon: "fa-solid fa-utensils",
+            isActive: true,
+            displayOrder: 3,
             createdAt: "2025-11-03T00:30:06.387"
           }
         ];
