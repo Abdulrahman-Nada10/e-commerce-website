@@ -4,18 +4,20 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingCart, User, Heart, Package } from "lucide-react";
 import MobileToggle from "../features/MobileToggle";
 import MobileMenu from "../features/MobileMenu";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
+import { useOrder } from "../../context/OrderContext";
 
 // Nav items
 const navItems = [
   { name: "Products", href: "/Products" },
   { name: "About", href: "/about" },
-  { name: "Profile", href: "/profile" },
-  { name: "Help", href: "/help" },
   { name: "Contact Us", href: "/contactus" },
+  { name: "Help", href: "/help" },
+
 ];
 
 // NavLink component
@@ -140,7 +142,10 @@ const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
   const { cartItemCount } = useCart();
+  const { wishlistItemCount } = useWishlist();
+  const { orders } = useOrder();
   const baseColor = "#4EC5F5";
+  const ordersCount = orders.length;
 
   useEffect(() => {
     const navEl = navRef.current;
@@ -191,7 +196,29 @@ const NavBar = () => {
                 </Link>
               </IconButton>
 
-              <IconButton ariaLabel="User Profile" className="hidden md:inline-flex">
+              <IconButton ariaLabel="Wishlist">
+                <Link href="/wishlist" className="relative">
+                  <Heart className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
+                  {wishlistItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {wishlistItemCount}
+                    </span>
+                  )}
+                </Link>
+              </IconButton>
+
+              <IconButton ariaLabel="Orders">
+                <Link href="/orders" className="relative">
+                  <Package className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
+                  {ordersCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {ordersCount}
+                    </span>
+                  )}
+                </Link>
+              </IconButton>
+
+              <IconButton ariaLabel="User Profile">
                 <Link href="/profile" className="relative">
                   <User className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
                 </Link>
