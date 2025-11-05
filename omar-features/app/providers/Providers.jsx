@@ -3,6 +3,8 @@
 import React from "react";
 import { CartProvider } from "../context/CartContext";
 import { ProductProvider } from "../context/ProductContext";
+import { WishlistProvider } from "../context/WishlistContext";
+import { OrderProvider } from "../context/OrderContext";
 import ReactQueryProvider from "../../providers/ReactQueryProvider";
 
 const Providers = ({ children }) => {
@@ -10,7 +12,11 @@ const Providers = ({ children }) => {
     <ReactQueryProvider>
       <CartProvider>
         <ProductProvider>
-          {children}
+          <WishlistProvider>
+            <OrderProvider>
+              {children}
+            </OrderProvider>
+          </WishlistProvider>
         </ProductProvider>
       </CartProvider>
     </ReactQueryProvider>

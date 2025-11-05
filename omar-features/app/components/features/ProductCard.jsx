@@ -1,10 +1,13 @@
 // components/features/ProductCard.jsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
+import Link from "next/link";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
+import { useOrder } from "../../context/OrderContext";
 
 const ACCENT_COLOR = "#4EC5F5";
 const TEXT_COLOR = "#060010";
@@ -13,6 +16,8 @@ const CARD_BG = "#ffffff";
 const ProductCard = ({ product }) => {
   const { id, title, price, description, image } = product;
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
+  const [isHovered, setIsHovered] = useState(false);
 
   const glowStyle = {
     "--accent-color": ACCENT_COLOR,
@@ -25,6 +30,8 @@ const ProductCard = ({ product }) => {
       style={{
         backgroundColor: CARD_BG,
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full h-72 overflow-hidden p-6 flex items-center justify-center">
         <Image
@@ -35,6 +42,28 @@ const ProductCard = ({ product }) => {
           className="object-contain transition-transform duration-500 hover:scale-110"
           priority={false}
         />
+        {isHovered && (
+          <div className="absolute top-2 right-2 flex space-x-2">
+            <button
+              onClick={() => addToWishlist(product)}
+              className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+              aria-label="Add to wishlist"
+            >
+              <Heart className={`w-5 h-5 ${isInWishlist(id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+            </button>
+            <Link href={`/product/${id}`}>
+              <button
+                className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                aria-label="View product details"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="p-5 pt-3" style={{ color: TEXT_COLOR }}>

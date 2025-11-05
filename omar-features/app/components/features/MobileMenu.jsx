@@ -7,7 +7,6 @@ import { gsap } from "gsap";
 import MobileToggle from "./MobileToggle";
 
 const navItems = [
-  { name: "Home", href: "/" },
   { name: "Products", href: "/Products" },
   { name: "About", href: "/about" },
   { name: "Contact Us", href: "/contactus" },

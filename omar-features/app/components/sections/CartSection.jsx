@@ -204,11 +204,11 @@ const CartSection = () => {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <Link href="/checkout" className="w-1/">
+            <div className="flex justify-center w-full">
+              <Link href="/checkout" className="w-full flex justify-center">
                 <GlowPillButton
                   baseColor={baseColor}
-                  className="w-full mt-3 py-3 rounded-full text-white font-semibold uppercase shadow-lg hover:scale-105 transition-all"
+                  className="mt-3 py-3 px-8 rounded-full text-white font-semibold uppercase shadow-lg hover:scale-105 transition-all"
                 >
                   CHECKOUT
                 </GlowPillButton>
