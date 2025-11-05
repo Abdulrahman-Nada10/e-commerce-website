@@ -137,7 +137,7 @@ const HelpSection = () => {
               baseColor={baseColor}
               className="m-5 mt-5 py-3 px-8 text-white font-semibold rounded-full text-lg shadow-lg hover:scale-105 transition-all"
             >
-            CONTACT US          
+            Send your Issue          
               </GlowPillButton>
           </Link>
         </motion.div>

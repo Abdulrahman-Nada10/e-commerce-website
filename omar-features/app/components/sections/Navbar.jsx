@@ -11,11 +11,12 @@ import { useCart } from "../../context/CartContext";
 
 // Nav items
 const navItems = [
+  { name: "Home", href: "/" },
   { name: "Products", href: "/Products" },
   { name: "About", href: "/about" },
-  { name: "Profile", href: "/profile" },
-  { name: "Help", href: "/help" },
   { name: "Contact Us", href: "/contactus" },
+  { name: "Help", href: "/help" },
+
 ];
 
 // NavLink component
