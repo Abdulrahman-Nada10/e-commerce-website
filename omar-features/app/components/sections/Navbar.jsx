@@ -4,10 +4,11 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingCart, User, Heart } from "lucide-react";
 import MobileToggle from "../features/MobileToggle";
 import MobileMenu from "../features/MobileMenu";
 import { useCart } from "../../context/CartContext";
+import { useGetWishlistQuery } from "../../../lib/useWishlistMutations";
 
 // Nav items
 const navItems = [
@@ -140,6 +141,8 @@ const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
   const { cartItemCount } = useCart();
+  const { data: wishlist } = useGetWishlistQuery();
+  const wishlistItemCount = wishlist ? wishlist.length : 0;
   const baseColor = "#4EC5F5";
 
   useEffect(() => {
@@ -180,6 +183,17 @@ const NavBar = () => {
             </div>
 
             <div className="flex items-center space-x-1 order-2 md:order-0">
+              <IconButton ariaLabel="Wishlist">
+                <Link href="/wishlist" className="relative">
+                  <Heart className="h-5 w-5 text-gray-700 transition-colors hover:text-red-600" />
+                  {wishlistItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {wishlistItemCount}
+                    </span>
+                  )}
+                </Link>
+              </IconButton>
+
               <IconButton ariaLabel="Cart">
                 <Link href="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
