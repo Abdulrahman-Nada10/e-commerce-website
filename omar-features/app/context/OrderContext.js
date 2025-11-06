@@ -66,4 +66,4 @@ export const OrderProvider = ({ children }) => {
       {children}
     </OrderContext.Provider>
   );
-};
+}

@@ -9,7 +9,7 @@ export default function Home() {
     <main className="flex flex-col min-h-screen bg-[#ffffff] text-[#060010]">
                   <Header />
                   <CategoryIconsSection />
-                   <ExclusiveOffersSection />   
+                  <ExclusiveOffersSection />   
     </main>
   );
 }
