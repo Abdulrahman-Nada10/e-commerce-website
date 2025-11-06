@@ -13,7 +13,7 @@ import { useOrder } from "../../context/OrderContext";
 
 // Nav items
 const navItems = [
-  { name: "Products", href: "/products" },
+  { name: "Products", href: "/Products" },
   { name: "Categories", href: "/categories" },
   { name: "About", href: "/about" },
   { name: "Contact Us", href: "/contactus" },

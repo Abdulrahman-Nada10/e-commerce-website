@@ -1,43 +1,46 @@
-// Enhanced ExclusiveOffersSection with configurable slide count and custom data
-// components/sections/ExclusiveOffersSection.jsx
+// Synchronized Products Listing Page using ProductContext
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Search, Filter } from "lucide-react";
 import ProductCard from "../components/features/ProductCard";
 import Header from "./Header";
+import { useProducts } from "../context/ProductContext";
+
 const ACCENT_COLOR = "#4EC5F5";
 const TEXT_COLOR = "#060010";
 const BG_COLOR = "#ffffff";
-const API_URL = "https://fakestoreapi.com/products?limit=10";
 
 const NUM_ROWS = 6;
 
-const ExclusiveOffersSection = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+const ProductsListingPage = () => {
+  const { products, loading } = useProducts();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const carouselRefs = useRef([...Array(NUM_ROWS)].map(() => React.createRef()));
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  // Filter products based on search and category
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+      const isActive = product.active !== false; // Show active products by default
+      return matchesSearch && matchesCategory && isActive;
+    });
+  }, [products, searchTerm, selectedCategory]);
+
+  // Get unique categories
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
+    return ['All', ...uniqueCategories];
+  }, [products]);
 
   const REPEATED_PRODUCTS = useMemo(() => {
-    if (products.length === 0) return [];
-    return [...products, ...products];
-  }, [products]);
+    if (filteredProducts.length === 0) return [];
+    return [...filteredProducts, ...filteredProducts];
+  }, [filteredProducts]);
 
   
   const scroll = (direction) => {
@@ -91,13 +94,48 @@ const ExclusiveOffersSection = () => {
     >
      
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-7xl mx-auto px-6 mb-8">
-          <h2
-            className="text-2xl font-bold text-left uppercase tracking-wider"
-            style={{ color: TEXT_COLOR }}
-          >
-            Exclusive Offers
-          </h2>
+        {/* Search and Filter Controls */}
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <h2
+              className="text-2xl font-bold text-left uppercase tracking-wider"
+              style={{ color: TEXT_COLOR }}
+            >
+              Our Products
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-64"
+                  style={{ color: TEXT_COLOR }}
+                />
+              </div>
+              {/* Category Filter */}
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white w-full sm:w-48"
+                  style={{ color: TEXT_COLOR }}
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          {/* Results Count */}
+          <div className="text-sm text-gray-600">
+            Showing {filteredProducts.length} of {products.length} products
+          </div>
         </div>
 
         {loading ? (
@@ -155,4 +193,4 @@ const ExclusiveOffersSection = () => {
   );
 };
 
-export default ExclusiveOffersSection;
+export default ProductsListingPage;
