@@ -41,16 +41,21 @@ export const CartProvider = ({ children }) => {
   };
 
   const cartItemCount = useMemo(() => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    return cart.reduce((total, item) => total + (item.quantity || 1), 0);
   }, [cart]);
+
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const contextValue = useMemo(
     () => ({
       cart,
       cartItemCount,
       addToCart,
-      removeFromCart, 
-      updateQuantity, 
+      removeFromCart,
+      updateQuantity,
+      clearCart,
     }),
     [cart, cartItemCount]
   );

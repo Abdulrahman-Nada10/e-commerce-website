@@ -51,17 +51,29 @@ export const ProductProvider = ({ children }) => {
         }
 
         // Fetch products
-        const productsResponse = await fetch("https://fakestoreapi.com/products");
+        const productsResponse = await fetch("https://localhost:7118/api/Product?languageCode=en");
         const productData = await productsResponse.json();
-        // Add mock status and stock and assign categories from API
-        const productsWithStatus = productData.map((product, index) => ({
-          ...product,
-          active: Math.random() > 0.5,
-          stock: Math.floor(Math.random() * 100) + 1,
-          discount: Math.floor(Math.random() * 50), // Random discount 0-50%
-          category: categoryData.success && categoryData.data && categoryData.data.length > 0
-            ? categoryData.data[index % categoryData.data.length].title
-            : 'Default Category',
+        // Map the API response to expected format
+        const productsWithStatus = productData.map((product) => ({
+          id: product.productID,
+          title: product.title,
+          price: product.salePrice || product.price,
+          description: product.description,
+          shortDescription: product.shortDescription,
+          sku: product.sku,
+          currency: product.currency,
+          image: '/images/placeholder.jpg', // Placeholder since API doesn't provide images
+          active: product.isPublished,
+          stock: product.quantity,
+          discount: product.price && product.salePrice ? Math.round(((product.price - product.salePrice) / product.price) * 100) : 0,
+          category: 'Default Category', // Will be updated when categories are fetched
+          isFeatured: product.isFeatured,
+          isDeleted: product.isDeleted,
+          brandID: product.brandID,
+          categoryID: product.categoryID,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+          deletedAt: product.deletedAt,
         }));
         setProducts(productsWithStatus);
       } catch (error) {

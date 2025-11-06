@@ -11,6 +11,8 @@ const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const { placeOrder } = useOrder();
   const router = useRouter();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [orderId, setOrderId] = useState(null);
 
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -31,10 +33,16 @@ const CheckoutPage = () => {
       return;
     }
 
-    const orderId = placeOrder(cart, userInfo);
-    alert(`Order placed successfully! Order ID: ${orderId}`);
+    const newOrderId = placeOrder(cart, userInfo);
+    setOrderId(newOrderId);
+    setShowSuccess(true);
     clearCart();
-    router.push('/orders');
+
+    // Hide success message after 3 seconds and redirect
+    setTimeout(() => {
+      setShowSuccess(false);
+      router.push('/orders');
+    }, 3000);
   };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
@@ -49,7 +57,7 @@ const CheckoutPage = () => {
           <div className="text-center">
             <p className="text-gray-500 text-lg mb-4">Your cart is empty.</p>
             <Link
-              href="/"
+              href="/products"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Continue Shopping
@@ -65,6 +73,18 @@ const CheckoutPage = () => {
       <div className="pt-24 pb-12 min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+
+          {/* Success Message */}
+          {showSuccess && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg">
+              <div className="flex items-center space-x-2">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="font-semibold">Order placed successfully! Order ID: {orderId}</span>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
@@ -89,19 +109,19 @@ const CheckoutPage = () => {
                   ))}
                 </div>
                 <div className="border-t pt-4 mt-4">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between  text-black">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between  text-black">
                     <span>Shipping</span>
                     <span>${shipping.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between  text-black">
                     <span>Tax</span>
                     <span>${tax.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                  <div className="flex justify-between font-bold text-lg pt-2 border-t text-black">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
@@ -119,7 +139,7 @@ const CheckoutPage = () => {
                     placeholder="Full Name *"
                     value={userInfo.name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                   <input
@@ -128,7 +148,7 @@ const CheckoutPage = () => {
                     placeholder="Email *"
                     value={userInfo.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                   <input
@@ -137,7 +157,7 @@ const CheckoutPage = () => {
                     placeholder="Address *"
                     value={userInfo.address}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                   <input
@@ -146,20 +166,20 @@ const CheckoutPage = () => {
                     placeholder="Phone Number *"
                     value={userInfo.phone}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white  text-black p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Payment Method</h2>
                 <div className="space-y-4">
                   <select
                     name="paymentMethod"
                     value={userInfo.paymentMethod}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2  text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="credit_card">Credit Card</option>
                     <option value="debit_card">Debit Card</option>
@@ -171,18 +191,18 @@ const CheckoutPage = () => {
                       <input
                         type="text"
                         placeholder="Card Number"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="grid grid-cols-2 gap-4">
                         <input
                           type="text"
                           placeholder="MM/YY"
-                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-3 py-2  text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                           type="text"
                           placeholder="CVV"
-                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -196,7 +216,7 @@ const CheckoutPage = () => {
                   onClick={handleCheckout}
                   className="py-3 px-6 rounded-lg font-semibold"
                 >
-                  Confirm Order
+                  Confirm
                 </GlowPillButton>
               </div>
             </div>

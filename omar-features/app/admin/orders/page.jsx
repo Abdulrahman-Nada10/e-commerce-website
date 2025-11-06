@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOrder } from '../../context/OrderContext';
-import { NavBar } from '../../components/sections/Navbar';
-import { Footer } from '../../components/sections/Footer';
 
 const AdminOrdersPage = () => {
   const { getAllOrders, updateOrderStatus } = useOrder();
@@ -36,7 +34,6 @@ const AdminOrdersPage = () => {
 
   return (
     <>
-      <NavBar />
       <div className="pt-24 pb-12 min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Order Management</h1>
@@ -68,7 +65,7 @@ const AdminOrdersPage = () => {
                       <select
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                        className="px-3 py-1  text-black border border-gray-300 rounded-md text-sm"
                       >
                         {statusOptions.map(status => (
                           <option key={status} value={status}>{status}</option>
@@ -116,7 +113,6 @@ const AdminOrdersPage = () => {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

@@ -8,9 +8,11 @@ import MobileToggle from "./MobileToggle";
 
 const navItems = [
   { name: "Products", href: "/Products" },
+  { name: "Categories", href: "/categories" },
   { name: "About", href: "/about" },
   { name: "Contact Us", href: "/contactus" },
   { name: "Help", href: "/help" },
+
 
 ];
 
@@ -155,94 +157,94 @@ const MobileMenu = ({ isOpen, setIsOpen, ease = "power3.out" }) => {
 
     if (!menu || !backdrop || !items) return;
 
-    tlRef.current?.kill();
+    if (!tlRef.current) {
+      const tl = gsap.timeline({ paused: true, defaults: { ease, duration: 0.4 } });
+      tlRef.current = tl;
 
-    const tl = gsap.timeline({ paused: true, defaults: { ease, duration: 0.4 } });
-    tlRef.current = tl;
+      tl.fromTo(
+        backdrop,
+        { opacity: 0, visibility: "hidden" },
+        { opacity: 1, visibility: "visible", duration: 0.4 },
+        0
+      );
 
-    tl.fromTo(
-      backdrop,
-      { opacity: 0, visibility: "hidden" },
-      { opacity: 1, visibility: "visible", duration: 0.2 },
-      0
-    );
+      gsap.set(menu, { visibility: "hidden" });
 
-    gsap.set(menu, { visibility: "hidden" });
+      tl.fromTo(
+        menu,
+        { x: "200%", visibility: "hidden" },
+        { x: 0, visibility: "visible", duration: 0.1, ease: "power3.out" },
+        0.1
+      );
 
-    tl.fromTo(
-      menu,
-      { x: "100%", visibility: "hidden" },
-      { x: 0, visibility: "visible", duration: 0.4, ease: "back.out(0.6)" },
-      0.1
-    );
-
-    tl.fromTo(
-      items,
-      { opacity: 0, x: 50 },
-      { opacity: 1, x: 0, stagger: 0.08, duration: 0.3 },
-      0.3
-    );
+      tl.fromTo(
+        items,
+        { opacity: 0, x: 50 },
+        { opacity: 1, x: 0, stagger: 0.08, duration: 0.3 },
+        0.3
+      );
+    }
 
     if (isOpen) {
-      tl.play();
+      tlRef.current.play();
     } else {
-      tl.reverse(0.3);
+      tlRef.current.reverse();
     }
   }, [isOpen, ease]);
 
   return (
     <>
-      <div
-        ref={backdropRef}
-        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-200 ${
-          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
-        onClick={() => setIsOpen(false)}
-        aria-hidden="true"
-      />
+      {isOpen && (
+        <>
+          <div
+            ref={backdropRef}
+            className="fixed inset-0 z-40 bg-black/60"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
 
-    <div
-  ref={menuRef}
-  className="
-    fixed
-    top-16
-    right-0
-    h-[calc(100vh-4rem)]
-    w-[90%]
-    xs:w-[60%]
-    sm:w-[70%]
-    md:w-[45%]
-    lg:w-[35%]
-    max-w-sm
-    bg-white
-    shadow-2xl
-    z-50
-    px-6
-    py-8
-    overflow-y-auto
-    rounded-tl-2xl
-    rounded-bl-2xl
-    transition-all
-    duration-300
-  "
-  style={{ willChange: 'transform, opacity' }}
->
-
-
-        <nav className="flex flex-col gap-6 mt-16 sm:mt-20">
-          <ul ref={listRef} className="flex flex-col gap-4 list-none p-0 m-0">
-            {navItems.map((item) => (
-              <MobileNavLink
-                key={item.name}
-                href={item.href}
-                closeMenu={() => setIsOpen(false)}
-              >
-                {item.name}
-              </MobileNavLink>
-            ))}
-          </ul>
-        </nav>
-      </div>
+          <div
+            ref={menuRef}
+            className="
+              fixed
+              top-16
+              right-0
+              h-[calc(100vh-4rem)]
+              w-[90%]
+              xs:w-[60%]
+              sm:w-[70%]
+              md:w-[45%]
+              lg:w-[35%]
+              max-w-sm
+              bg-white
+              shadow-2xl
+              z-50
+              px-6
+              py-8
+              overflow-y-auto
+              rounded-tl-2xl
+              rounded-bl-2xl
+              transition-all
+              duration-300
+            "
+            style={{ willChange: 'transform, opacity' }}
+          >
+            <nav className="flex flex-col gap-6 mt-16 sm:mt-20">
+              <ul ref={listRef} className="flex flex-col gap-4 list-none p-0 m-0">
+                {navItems.map((item) => (
+                  <MobileNavLink
+                    key={item.name}
+                    href={item.href}
+                    closeMenu={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </MobileNavLink>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -51,7 +51,7 @@ const CartSection = () => {
       <div className="w-24 h-24 relative rounded-lg overflow-hidden shrink-0 sm:mr-6 bg-white">
         <Image
           src={item.image || "/images/placeholder.jpg"}
-          alt={item.name || "Product Image"}
+          alt={item.title || "Product Image"}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           style={{ objectFit: "cover" }}
@@ -59,7 +59,7 @@ const CartSection = () => {
       </div>
 
       <div className="flex-1 flex flex-col mt-4 sm:mt-0">
-        <p className="font-semibold text-[#060010] text-lg">{item.name}</p>
+        <p className="font-semibold text-[#060010] text-lg">{item.title}</p>
         <p className="text-[#060010]/70 mt-1">${item.price.toFixed(2)}</p>
 
         <div className="flex items-center mt-4">
@@ -205,17 +205,16 @@ const CartSection = () => {
             </div>
 
             <div className="flex justify-center w-full">
-              <Link href="/checkout" className="w-full flex justify-center">
-                <GlowPillButton
-                  baseColor={baseColor}
-                  className="mt-3 py-3 px-8 rounded-full text-white font-semibold uppercase shadow-lg hover:scale-105 transition-all"
-                >
-                  CHECKOUT
-                </GlowPillButton>
-              </Link>
+              <GlowPillButton
+                href="/checkout"
+                baseColor={baseColor}
+                className="mt-3 py-3 px-8 rounded-full text-white font-semibold uppercase shadow-lg hover:scale-105 transition-all"
+              >
+                CHECKOUT
+              </GlowPillButton>
             </div>
 
-            <Link href="/products">
+            <Link href="/">
               <button className="w-full mt-3 py-2 font-medium text-[#060010] hover:text-[#4EC5F5] transition-all">
                 CONTINUE SHOPPING
               </button>

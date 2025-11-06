@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import ProductCard from '../components/features/ProductCard';
+import ProductCard from '../../components/features/ProductCard';
 import { Upload, X, Check, AlertCircle } from 'lucide-react';
-import { useProducts } from '../context/ProductContext';
+import { useProducts } from '../../context/ProductContext';
 
 const ACCENT_COLOR = "#4EC5F5";
 const PILL_COLOR = "#FFFFFF";
@@ -129,12 +129,12 @@ const AddEditProductPage = () => {
     }
 
     setTimeout(() => {
-      router.push('/ProductsManagement');
+      router.push('/admin/productsmanagement');
     }, 2000);
   };
 
   const handleCancel = () => {
-    router.push('/ProductsManagement');
+    router.push('/admin/productsmanagement');
   };
 
   const previewProduct = {

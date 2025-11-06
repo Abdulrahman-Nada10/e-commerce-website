@@ -11,7 +11,7 @@ const pillColor = '#ffffff';
 const textColor = '#060010'; 
 const duration = 0.7; 
 
-const GlowPillButton = ({ children, href = '/products' }) => {
+const GlowPillButton = ({ children, href = '/products', onClick }) => {
   const linkRef = useRef(null);
   const circleRef = useRef(null);
   const labelRef = useRef(null);
@@ -100,9 +100,15 @@ const GlowPillButton = ({ children, href = '/products' }) => {
   const handleClick = () => {
     activeTweenRef.current?.kill();
     tlRef.current?.tweenTo(0, {
-        duration: 0.2, 
+        duration: 0.2,
         ease: 'power1.easeOut',
-        onComplete: () => router.push(href)
+        onComplete: () => {
+          if (onClick) {
+            onClick();
+          } else {
+            router.push(href);
+          }
+        }
     });
   };
 
