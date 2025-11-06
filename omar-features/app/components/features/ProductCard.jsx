@@ -18,9 +18,8 @@ const CARD_BG = "#ffffff";
 const ProductCard = ({ product }) => {
   const { id, title, price, description, image } = product;
   const { addToCart } = useCart();
-
-  const [isHovered, setIsHovered] = useState(false);
-  const addToWishlistMutation = useAddToWishlistMutation();
+    const [isHovered, setIsHovered] = useState(false);
+const addToWishlistMutation = useAddToWishlistMutation();
   const removeFromWishlistMutation = useRemoveFromWishlistMutation();
   const { data: wishlist } = useGetWishlistQuery();
   const isInWishlist = wishlist ? wishlist.some((item) => item.id === id) : false;
@@ -50,12 +49,13 @@ const ProductCard = ({ product }) => {
         />
         {isHovered && (
           <div className="absolute top-2 right-2 flex space-x-2">
-            <button
-              onClick={() => addToWishlist(product)}
+             <button
+              onClick={() => isInWishlist ? removeFromWishlistMutation.mutate(id) : addToWishlistMutation.mutate(id)}
               className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
-              aria-label="Add to wishlist"
+               aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              data-active={isInWishlist}
             >
-              <Heart className={`w-5 h-5 ${isInWishlist(id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+              <Heart className={`w-5 h-5 ${isInWishlist  ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
             </button>
             <Link href={`/product/${id}`}>
               <button
@@ -90,13 +90,24 @@ const ProductCard = ({ product }) => {
           </p>
 
           <div className="flex space-x-2">
-            <button
+            {/* <button
               className="wishlist-button relative p-2.5 rounded-full transition-all duration-300 group overflow-hidden"
               onClick={() => isInWishlist ? removeFromWishlistMutation.mutate(id) : addToWishlistMutation.mutate(id)}
               aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
               data-active={isInWishlist}
             >
              
+              <div className="absolute inset-0 bg-linear-to-br from-pink-500 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              
+              <div className={`absolute inset-0 bg-linear-to-br from-red-500 to-pink-600 transition-opacity duration-300 ${isInWishlist ? 'opacity-100' : 'opacity-0'}`} />
+              
+    
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
+            
+              {isInWishlist && (
+                <div className="absolute inset-0 rounded-full border-2 border-red-400 animate-ping opacity-75" />
+              )}
               
     
               <Heart 
@@ -108,7 +119,7 @@ const ProductCard = ({ product }) => {
                 fill={isInWishlist ? 'currentColor' : 'none'}
                 strokeWidth={2.5}
               />
-            </button>
+            </button> */}
 
             <button
               className="flex items-center space-x-2 py-2 px-4 rounded-full font-bold text-sm transition-all duration-300 button-glow-min"

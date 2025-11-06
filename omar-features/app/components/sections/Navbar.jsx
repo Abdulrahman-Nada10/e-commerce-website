@@ -187,16 +187,7 @@ const NavBar = () => {
             </div>
 
             <div className="flex items-center space-x-1 order-2 md:order-0">
-              <IconButton ariaLabel="Wishlist">
-                <Link href="/wishlist" className="relative">
-                  <Heart className="h-5 w-5 text-gray-700 transition-colors hover:text-red-600" />
-                  {wishlistItemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {wishlistItemCount}
-                    </span>
-                  )}
-                </Link>
-              </IconButton>
+              
 
               <IconButton ariaLabel="Cart">
                 <Link href="/cart" className="relative">

@@ -10,11 +10,17 @@ export const useAddToWishlistMutation = () => {
             // const { data } = await axiosInstance.post("/v1/wishlist", { productId });
             // return data;
             // Fake data implementation
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({ success: true, message: "Product added to wishlist" });
-                }, 500);
-            });
+            // return new Promise((resolve) => {
+            //     setTimeout(() => {
+            //         resolve({ success: true, message: "Product added to wishlist" });
+            //     }, 500);
+            // });
+            return new Promise((_, reject) => {
+  setTimeout(() => {
+    reject(new Error("Fake error: failed to add to wishlist"));
+  }, 500);
+});
+
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["wishlist"] });
