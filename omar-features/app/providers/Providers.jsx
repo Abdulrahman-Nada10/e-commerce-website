@@ -7,16 +7,17 @@ import { WishlistProvider } from "../context/WishlistContext";
 import { OrderProvider } from "../context/OrderContext";
 import ReactQueryProvider from "../../providers/ReactQueryProvider";
 
+
 const Providers = ({ children }) => {
   return (
     <ReactQueryProvider>
       <CartProvider>
         <ProductProvider>
-          <WishlistProvider>
+          
             <OrderProvider>
               {children}
             </OrderProvider>
-          </WishlistProvider>
+          
         </ProductProvider>
       </CartProvider>
     </ReactQueryProvider>
