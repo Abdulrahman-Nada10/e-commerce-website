@@ -25,6 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={poppins.variable}>
       <body className="antialiased font-poppins">
         <Providers>
+<<<<<<< HEAD
           <WishlistProvider>
             <OrderProvider>
               <ReactQueryProvider>
@@ -34,6 +35,11 @@ export default function RootLayout({ children }) {
               </ReactQueryProvider>
             </OrderProvider>
           </WishlistProvider>
+=======
+          <NavBar />
+          <main>{children}</main>
+          <Footer />
+>>>>>>> 0d5bba2e92a8051a5a1ee0b33645a892ec739bb9
         </Providers>
       </body>
     </html>

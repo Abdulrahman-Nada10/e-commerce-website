@@ -1,9 +1,9 @@
-// app/products/page.jsx
+// app/productsmanagment/page.jsx
 "use client";
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProducts } from '../context/ProductContext';
+import { useProducts } from '../../context/ProductContext';
 import { Search, Plus, Edit, Trash2, Eye, EyeOff, Percent } from 'lucide-react';
 
 const ACCENT_COLOR = "#4EC5F5";
@@ -25,11 +25,11 @@ const ProductsListPage = () => {
   const categories = [...new Set(products.map(p => p.category))];
 
   const handleAddProduct = () => {
-    router.push('/editor');
+    router.push('/admin/editor');
   };
 
   const handleEditProduct = (id) => {
-    router.push(`/editor?edit=true&id=${id}`);
+    router.push(`/admin/editor?edit=true&id=${id}`);
   };
 
   const handleDeleteProduct = (id) => {

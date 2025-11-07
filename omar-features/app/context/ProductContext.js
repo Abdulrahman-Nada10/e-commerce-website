@@ -17,87 +17,37 @@ export const ProductProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Load products from localStorage on mount
   useEffect(() => {
-    const fetchData = async () => {
+    const loadProducts = () => {
       try {
-        // Fetch categories with error handling
-        let categoryData = { success: false, data: [] };
-        try {
-          const categoriesResponse = await fetch("https://localhost:7118/api/Categories?languageCode=ar&search=Living%20Room&isActive=true");
-          if (categoriesResponse.ok) {
-            categoryData = await categoriesResponse.json();
-          }
-        } catch (error) {
-          console.warn("Categories API not available, using fallback data:", error);
-        }
-
-        if (categoryData.success && categoryData.data) {
-          // Use the actual API data array
-          setCategories(categoryData.data);
+        const savedProducts = localStorage.getItem('adminProducts');
+        if (savedProducts) {
+          setProducts(JSON.parse(savedProducts));
         } else {
-          // Fallback data
-          const fallbackCategories = [
-            {
-              categoryID: 1,
-              title: "غرفة المعيشة",
-              description: "مجموعة واسعة من أثاث غرفة المعيشة لتوفير الراحة والخصوصية",
-              icon: "fa-solid fa-couch",
-              isActive: true,
-              displayOrder: 1,
-              createdAt: "2025-11-03T00:30:06.387"
-            }
-          ];
-          setCategories(fallbackCategories);
+          // Initialize with empty array if no saved products
+          setProducts([]);
         }
-
-        // Fetch products
-        const productsResponse = await fetch("https://fakestoreapi.com/products");
-        const productData = await productsResponse.json();
-        // Add mock status and stock and assign categories from API
-        const productsWithStatus = productData.map((product, index) => ({
-          ...product,
-          active: Math.random() > 0.5,
-          stock: Math.floor(Math.random() * 100) + 1,
-          discount: Math.floor(Math.random() * 50), // Random discount 0-50%
-          category: categoryData.success && categoryData.data && categoryData.data.length > 0
-            ? categoryData.data[index % categoryData.data.length].title
-            : 'Default Category',
-        }));
-        setProducts(productsWithStatus);
       } catch (error) {
-        console.error("Failed to fetch data:", error);
-        // Fallback data
-        const fallbackCategories = [
-          {
-            categoryID: 1,
-            title: "غرفة المعيشة",
-            description: "مجموعة واسعة من أثاث غرفة المعيشة لتوفير الراحة والخصوصية",
-            icon: "fa-solid fa-couch",
-            isActive: true,
-            displayOrder: 1,
-            createdAt: "2025-11-03T00:30:06.387"
-          }
-        ];
-        setCategories(fallbackCategories);
-
-        const fallbackProducts = Array.from({ length: 30 }, (_, index) => ({
-          id: index + 1,
-          title: `Product ${index + 1}`,
-          price: Math.floor(Math.random() * 100) + 10,
-          description: `Description for product ${index + 1}`,
-          category: fallbackCategories[Math.floor(index / 2) % fallbackCategories.length].title,
-          image: '/images/placeholder.jpg',
-          active: Math.random() > 0.5,
-          stock: Math.floor(Math.random() * 100) + 1,
-          discount: Math.floor(Math.random() * 50),
-        }));
-        setProducts(fallbackProducts);
-      } finally {
-        setLoading(false);
+        console.error('Error loading products from localStorage:', error);
+        setProducts([]);
       }
+      setLoading(false);
     };
-    fetchData();
+
+    loadProducts();
   }, []);
+
+  // Save products to localStorage whenever products change
+  useEffect(() => {
+    if (!loading) {
+      try {
+        localStorage.setItem('adminProducts', JSON.stringify(products));
+      } catch (error) {
+        console.error('Error saving products to localStorage:', error);
+      }
+    }
+  }, [products, loading]);
 
   const addProduct = (newProduct) => {
     const product = {

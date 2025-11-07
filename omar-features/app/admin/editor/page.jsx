@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import ProductCard from '../components/features/ProductCard';
+import ProductCard from '../../components/features/ProductCard';
 import { Upload, X, Check, AlertCircle } from 'lucide-react';
-import { useProducts } from '../context/ProductContext';
+import { useProducts } from '../../context/ProductContext';
 
 const ACCENT_COLOR = "#4EC5F5";
 const PILL_COLOR = "#FFFFFF";
@@ -35,27 +35,28 @@ const AddEditProductPage = () => {
   const [toast, setToast] = useState(null);
   const fileInputRef = useRef(null);
 
+  // Load categories from localStorage or use fallback
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("https://localhost:7118/api/Categories?languageCode=ar&search=Living%20Room&isActive=true");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data) {
-            setApiCategories(data.data);
-          } else {
-            setApiCategories([]);
-          }
-        } else {
-          setApiCategories([]);
-        }
-      } catch (error) {
-        console.warn("Categories API not available, using fallback data:", error);
-        // Fallback
-        setApiCategories([]);
+    try {
+      const savedCategories = localStorage.getItem('adminCategories');
+      if (savedCategories) {
+        setApiCategories(JSON.parse(savedCategories));
+      } else {
+        // Fallback categories
+        const fallbackCategories = [
+          { title: 'Living Room' },
+          { title: 'Bedroom' },
+          { title: 'Kitchen' },
+          { title: 'Dining Room' },
+          { title: 'Office' }
+        ];
+        setApiCategories(fallbackCategories);
+        localStorage.setItem('adminCategories', JSON.stringify(fallbackCategories));
       }
-    };
-    fetchCategories();
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      setApiCategories([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -129,12 +130,12 @@ const AddEditProductPage = () => {
     }
 
     setTimeout(() => {
-      router.push('/ProductsManagement');
+      router.push('/admin/productsmanagement');
     }, 2000);
   };
 
   const handleCancel = () => {
-    router.push('/ProductsManagement');
+    router.push('/admin/productsmanagement');
   };
 
   const previewProduct = {
