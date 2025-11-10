@@ -19,7 +19,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className={poppins.variable}>
       <body className="antialiased font-poppins bg-white">
         <Providers>
+
           <ConditionalLayout>{children}</ConditionalLayout>
+
         </Providers>
       </body>
     </html>

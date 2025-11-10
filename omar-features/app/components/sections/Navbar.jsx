@@ -12,7 +12,6 @@ import { selectCartItemCount } from '../../store/slices/cartSlice';
 import { selectWishlistItemCount } from '../../store/slices/wishlistSlice';
 import { selectOrders } from '../../store/slices/orderSlice';
 
-// Nav items
 const navItems = [
   { name: "Products", href: "/products" },
   { name: "Categories", href: "/categories" },

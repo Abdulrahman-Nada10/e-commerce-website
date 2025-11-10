@@ -12,6 +12,6 @@
     "checkJs": false,
     "skipLibCheck": true
   },
-  "include": ["**/*.js", "**/*.jsx"],
+  "include": ["**/*.js", "**/*.jsx", "app/components/constants/AnimatedButton.tsx"],
   "exclude": ["node_modules", "dist", "build"]
 }
