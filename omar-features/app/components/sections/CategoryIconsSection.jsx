@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useProducts } from "../../context/ProductContext";
+import { useSelector } from 'react-redux';
+import { selectCategories } from '../../store/slices/productSlice';
 import {
   Sofa,
   Armchair,
@@ -21,7 +22,7 @@ const TEXT_COLOR = "#060010";
 const SECTION_BG = "#ffffff";
 
 const CategoryIconsSection = () => {
-  const { categories } = useProducts();
+  const categories = useSelector(selectCategories);
   const [apiCategories, setApiCategories] = useState([]);
 
   useEffect(() => {

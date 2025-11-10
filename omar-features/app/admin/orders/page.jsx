@@ -1,25 +1,25 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useOrder } from '../../context/OrderContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllOrders, updateOrderStatus, syncOrdersFromAPI } from '../../store/slices/orderSlice';
+import { useOrdersQuery } from '../../../lib/useProductsQuery';
+import { CheckCircle, Clock, Truck, Package } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const AdminOrdersPage = () => {
-  const { getAllOrders, updateOrderStatus } = useOrder();
-  const [orders, setOrders] = useState([]);
+  const orders = useSelector(selectAllOrders);
+  const dispatch = useDispatch();
 
+  // Fetch orders from API with periodic updates
+  const { data: apiOrders } = useOrdersQuery();
+
+  // Sync API data with Redux store
   useEffect(() => {
-    const allOrders = getAllOrders();
-    setOrders(allOrders);
-  }, [getAllOrders]);
-
-  const handleStatusChange = (orderId, newStatus) => {
-    updateOrderStatus(orderId, newStatus);
-    setOrders(prev => prev.map(order =>
-      order.id === orderId
-        ? { ...order, status: newStatus, updatedAt: new Date().toISOString() }
-        : order
-    ));
-  };
+    if (apiOrders) {
+      dispatch(syncOrdersFromAPI(apiOrders));
+    }
+  }, [apiOrders, dispatch]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -30,7 +30,21 @@ const AdminOrdersPage = () => {
     }
   };
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'waiting': return <Clock className="h-4 w-4" />;
+      case 'in the way': return <Truck className="h-4 w-4" />;
+      case 'delivered': return <CheckCircle className="h-4 w-4" />;
+      default: return <Package className="h-4 w-4" />;
+    }
+  };
+
   const statusOptions = ['waiting', 'in the way', 'delivered'];
+
+  const handleStatusChange = (orderId, newStatus) => {
+    dispatch(updateOrderStatus({ orderId, newStatus }));
+    toast.success(`Order #${orderId} status updated to ${newStatus}`);
+  };
 
   return (
     <>
@@ -62,18 +76,21 @@ const AdminOrdersPage = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1 ${getStatusColor(order.status)}`}>
+                          {getStatusIcon(order.status)}
+                          <span>{order.status}</span>
+                        </span>
+                      </div>
                       <select
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        className="px-3 py-1  text-black border border-gray-300 rounded-md text-sm"
+                        className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         {statusOptions.map(status => (
                           <option key={status} value={status}>{status}</option>
                         ))}
                       </select>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </span>
                     </div>
                   </div>
 

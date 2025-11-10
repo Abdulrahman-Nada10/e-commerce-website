@@ -4,10 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Star, ShoppingCart, CheckCircle, XCircle } from "lucide-react";
-import { useProducts } from "../../context/ProductContext";
-import { useCart } from "../../context/CartContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../../store/slices/cartSlice';
+import { addToWishlist, removeFromWishlist, selectWishlist } from '../../store/slices/wishlistSlice';
+import { selectProductById } from '../../store/slices/productSlice';
+import { Heart } from "lucide-react";
 import GlowPillButton from "../../components/gsap/GlowPillButton";
 import Link from "next/link";
+import toast from 'react-hot-toast';
 
 const ACCENT_COLOR = "#4EC5F5";
 const PILL_COLOR = "#ffffff";
@@ -16,9 +20,9 @@ const TEXT_COLOR = "#060010";
 const ProductDetailsPage = () => {
   const params = useParams();
   const productId = params.id;
-  const { getProductById } = useProducts();
-  const { addToCart } = useCart();
-  const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
+  const wishlist = useSelector(selectWishlist);
+  const product = useSelector((state) => selectProductById(state, productId));
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -48,27 +52,31 @@ const ProductDetailsPage = () => {
   ];
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const productData = getProductById(productId);
-        if (productData) {
-          setProduct(productData);
-        }
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (productId) {
-      fetchProduct();
+    if (product) {
+      setLoading(false);
+    } else {
+      setLoading(false);
     }
-  }, [productId, getProductById]);
+  }, [product]);
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart(product);
+      dispatch(addToCart(product));
+      toast.success(`${product.title} added to cart!`);
+    }
+  };
+
+  const isInWishlist = wishlist.some(item => item.id === product?.id);
+
+  const handleWishlistToggle = () => {
+    if (!product) return;
+
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(product.id));
+      toast.success(`${product.title} removed from wishlist!`);
+    } else {
+      dispatch(addToWishlist(product));
+      toast.success(`${product.title} added to wishlist!`);
     }
   };
 
@@ -99,15 +107,14 @@ const ProductDetailsPage = () => {
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: PILL_COLOR }}>
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4" style={{ color: TEXT_COLOR }}>Product Not Found</h1>
-          <Link href="/Products">
-            <GlowPillButton>Back to Products</GlowPillButton>
+          <Link href="/products">
+            <GlowPillButton>GO Back</GlowPillButton>
           </Link>
         </div>
       </div>
     );
   }
 
-  // Mock multiple images (using the same image for now)
   const productImages = product.image ? [product.image, product.image, product.image] : ['/images/placeholder.jpg', '/images/placeholder.jpg', '/images/placeholder.jpg'];
 
   return (
@@ -184,13 +191,24 @@ const ProductDetailsPage = () => {
               </p>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 flex gap-4">
               <GlowPillButton onClick={handleAddToCart}>
                 <div className="flex items-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
                   <span>Add to Cart</span>
                 </div>
               </GlowPillButton>
+              <button
+                onClick={handleWishlistToggle}
+                className={`p-3 rounded-full border-2 transition-all duration-300 ${
+                  isInWishlist
+                    ? 'bg-red-50 border-red-200 text-red-600'
+                    : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600'
+                }`}
+                aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
+              </button>
             </div>
 
             <div className="border-t pt-6">

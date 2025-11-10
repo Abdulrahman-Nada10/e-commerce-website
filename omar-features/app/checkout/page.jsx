@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCart } from "../context/CartContext";
-import { useOrder } from "../context/OrderContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCart, clearCart } from '../store/slices/cartSlice';
+import { placeOrder } from '../store/slices/orderSlice';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GlowPillButton from "../components/gsap/GlowPillButton";
 
 const CheckoutPage = () => {
-  const { cart, clearCart } = useCart();
-  const { placeOrder } = useOrder();
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCart);
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -33,10 +34,11 @@ const CheckoutPage = () => {
       return;
     }
 
-    const newOrderId = placeOrder(cart, userInfo);
+    const newOrderId = Date.now().toString();
+    dispatch(placeOrder({ id: newOrderId, cartItems: cart, userInfo }));
     setOrderId(newOrderId);
     setShowSuccess(true);
-    clearCart();
+    dispatch(clearCart());
 
     // Hide success message after 3 seconds and redirect
     setTimeout(() => {

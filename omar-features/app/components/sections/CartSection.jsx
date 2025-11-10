@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useCart } from "../../context/CartContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCart, removeFromCart, updateQuantity, addToCart, selectCartItemCount } from '../../store/slices/cartSlice';
 import AnimatedBackground from "../gsap/AnimatedBackground";
 import GlowPillButton from "../gsap/GlowPillButton";
+import toast from 'react-hot-toast';
 
 const baseColor = "#4EC5F5";
 const pillColor = "#ffffff";
@@ -16,7 +18,9 @@ const textColor = "#060010";
 const changingWords = ["FUTURE", "STYLE", "CHOICE", "VIBE", "POWER"];
 
 const CartSection = () => {
-  const { cart, removeFromCart, updateQuantity, addToCart } = useCart();
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCart);
+  const cartItemCount = useSelector(selectCartItemCount);
   const [currentWord, setCurrentWord] = useState(changingWords[0]);
 
   useEffect(() => {
@@ -41,7 +45,16 @@ const CartSection = () => {
       }`}
     >
       <button
-        onClick={() => removeFromCart(item.id)}
+        onClick={() => {
+          dispatch(removeFromCart(item.id));
+          toast.success(`${item.title} removed from cart!`, {
+            style: {
+              background: '#EF4444',
+              color: '#fff',
+            },
+            icon: '🗑️',
+          });
+        }}
         className="absolute top-2 right-2 text-red-500 hover:text-red-600 transition p-1 rounded-full z-10"
         title="Remove item"
       >
@@ -64,7 +77,12 @@ const CartSection = () => {
 
         <div className="flex items-center mt-4">
           <button
-            onClick={() => updateQuantity(item.id, (item.quantity || 1) - 1)}
+            onClick={() => {
+              const newQuantity = (item.quantity || 1) - 1;
+              if (newQuantity >= 1) {
+                dispatch(updateQuantity({ id: item.id, newQuantity: newQuantity }));
+              }
+            }}
             className="font-bold border border-[#060010]/40 rounded-l-md w-8 h-8 flex items-center justify-center hover:bg-white transition"
             disabled={(item.quantity || 1) <= 1}
           >
@@ -76,7 +94,7 @@ const CartSection = () => {
           </span>
 
           <button
-            onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)}
+            onClick={() => dispatch(updateQuantity({ id: item.id, newQuantity: (item.quantity || 1) + 1 }))}
             className="font-bold border border-[#060010]/40 rounded-r-md w-8 h-8 flex items-center justify-center hover:bg-white transition"
           >
             +
@@ -138,7 +156,7 @@ const CartSection = () => {
         <div className="lg:col-span-2 space-y-6">
           <section className="bg-white p-6 rounded-xl shadow-lg border border-[#060010]/20">
             <h2 className="text-xl font-bold mb-6 text-[#060010] tracking-wide border-b pb-4 border-[#060010]/20">
-              SHOPPING CART ({cart.length})
+              SHOPPING CART ({cartItemCount})
             </h2>
             {cart.length === 0 ? (
               <p className="text-[#060010]/70 text-center py-10">Your cart is empty.</p>
@@ -168,7 +186,16 @@ const CartSection = () => {
                   <p className="font-semibold text-[#060010]">{product.name}</p>
                   <p className="text-[#060010]/70">${product.price}</p>
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={() => {
+                      dispatch(addToCart(product));
+                      toast.success(`${product.name} added to cart!`, {
+                        style: {
+                          background: '#10B981',
+                          color: '#fff',
+                        },
+                        icon: '🛒',
+                      });
+                    }}
                     className="mt-2 w-full py-1 text-sm bg-[#4EC5F5] text-white rounded-md hover:opacity-80 transition"
                   >
                     Add to Cart

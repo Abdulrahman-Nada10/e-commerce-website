@@ -1,26 +1,31 @@
 "use client";
 
 import React from "react";
-import { CartProvider } from "../context/CartContext";
-import { ProductProvider } from "../context/ProductContext";
-import { WishlistProvider } from "../context/WishlistContext";
-import { OrderProvider } from "../context/OrderContext";
+import { Provider } from "react-redux";
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from "../store/store";
 import ReactQueryProvider from "../../providers/ReactQueryProvider";
-
+import { Toaster } from "react-hot-toast";
 
 const Providers = ({ children }) => {
   return (
-    <ReactQueryProvider>
-      <CartProvider>
-        <ProductProvider>
-          
-            <OrderProvider>
-              {children}
-            </OrderProvider>
-          
-        </ProductProvider>
-      </CartProvider>
-    </ReactQueryProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ReactQueryProvider>
+          {children}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+            }}
+          />
+        </ReactQueryProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 

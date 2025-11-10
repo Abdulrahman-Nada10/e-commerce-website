@@ -4,8 +4,9 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight, Loader2, Search, Filter } from "lucide-react";
 import ProductCard from "../components/features/ProductCard";
-import Header from "./Header";
-import { useProducts } from "../context/ProductContext";
+import Header from "../components/sections/Header";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectProducts, selectLoading } from '../store/slices/productSlice';
 
 const ACCENT_COLOR = "#4EC5F5";
 const TEXT_COLOR = "#060010";
@@ -14,7 +15,8 @@ const BG_COLOR = "#ffffff";
 const NUM_ROWS = 6;
 
 const ProductsListingPage = () => {
-  const { products, loading } = useProducts();
+  const products = useSelector(selectProducts);
+  const loading = useSelector(selectLoading);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -23,8 +25,10 @@ const ProductsListingPage = () => {
   // Filter products based on search and category
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const title = product.title || '';
+      const description = product.description || '';
+      const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
       const isActive = product.active !== false; // Show active products by default
       return matchesSearch && matchesCategory && isActive;
@@ -42,7 +46,7 @@ const ProductsListingPage = () => {
     return [...filteredProducts, ...filteredProducts];
   }, [filteredProducts]);
 
-  
+
   const scroll = (direction) => {
     const scrollAmount = 324;
     carouselRefs.current.forEach((ref, i) => {
@@ -59,9 +63,9 @@ const ProductsListingPage = () => {
 
   const CardRow = ({ items, customRef, initialDirection }) => {
     return (
-      
+
       <div className="relative my-4">
-       
+
         <div
           ref={customRef}
           className="flex space-x-6 overflow-x-scroll scrollbar-hide py-4 snap-x snap-mandatory"
@@ -92,8 +96,9 @@ const ProductsListingPage = () => {
       className="w-full py-16 relative transition-opacity duration-1000"
       style={{ backgroundColor: BG_COLOR, color: TEXT_COLOR }}
     >
-     
+
       <div className="max-w-7xl mx-auto px-6">
+
         {/* Search and Filter Controls */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -147,7 +152,7 @@ const ProductsListingPage = () => {
           </div>
         ) : (
           <div className="relative">
-        
+
             <button
               onClick={() => scroll("left")}
               className="absolute z-10 top-1/2 -translate-y-1/2 -left-1 sm:-left-2 md:left-3 flex items-center justify-center rounded-full shadow-md hover:shadow-xl hover:scale-103 transition-all duration-300 w-16 h-16 sm:w-16 sm:h-16 md:w-16 md:h-16 pl-4"

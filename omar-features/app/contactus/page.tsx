@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Header from "./Header";
-import { COLORS } from "../components/constants/Colors";
+
 import GlowPillButton from "../components/gsap/GlowPillButton";
 
 export default function ContactPage() {
@@ -39,10 +39,10 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
           >
-            <h1 className="text-4xl font-bold text-center mb-3" style={{ color: COLORS.primary }}>
+            <h1 className="text-4xl  text-black font-bold text-center mb-3 text-primary">
               Contact Us
             </h1>
-            <p className="text-center mb-10 text-sm" style={{ color: COLORS.textDark }}>
+            <p className="text-center  text-black mb-10 text-sm text-textDark">
               We’d love to hear from you. Send us a message
             </p>
           </motion.div>
@@ -68,12 +68,12 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 whileHover={{ scale: 1.08 }}
-                className="flex flex-col items-center gap-2 cursor-pointer"
+                className="flex  text-black flex-col items-center gap-2 cursor-pointer"
               >
                 <div className="p-3 rounded-full hover:bg-indigo-50 transition-all duration-300">
-                  <Icon className="w-6 h-6" style={{ color: COLORS.primary }} />
+                  <Icon className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium" style={{ color: COLORS.textDark }}>
+                <span className="text-sm  text-black font-medium text-textDark">
                   {text}
                 </span>
               </motion.div>
@@ -97,7 +97,7 @@ export default function ContactPage() {
                   placeholder={field.placeholder}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-sm
+                  className="w-full text-black p-4 border border-gray-300 rounded-xl shadow-sm text-sm
                   focus:ring-4 focus:ring-indigo-200 focus:border-transparent outline-none"
                 />
               ) : (
@@ -110,7 +110,7 @@ export default function ContactPage() {
                   placeholder={field.placeholder}
                   value={field.key === "name" ? form.name : form.email}
                   onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                  className="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-sm
+                  className="w-full text-black p-4 border border-gray-300 rounded-xl shadow-sm text-sm
                   focus:ring-4 focus:ring-indigo-200 focus:border-transparent outline-none"
                 />
               )
@@ -121,12 +121,9 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6 }}
-              className="flex justify-center"
+              className="flex justify-center  text-black"
             >
-              <GlowPillButton
-                baseColor="#4EC5F5"
-                className="px-10 py-4 rounded-2xl font-medium text-base flex items-center gap-2 text-white"
-              >
+              <GlowPillButton onClick={() => {}}>
                 Send
               </GlowPillButton>
             </motion.div>

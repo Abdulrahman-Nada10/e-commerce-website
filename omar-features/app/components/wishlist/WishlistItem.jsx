@@ -4,25 +4,40 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Trash2, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "../../context/CartContext";
-import { useRemoveFromWishlistMutation } from "../../../lib/useWishlistMutations";
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../../store/slices/cartSlice';
+import { removeFromWishlist } from '../../store/slices/wishlistSlice';
 import { COLORS } from "../constants/Colors";
 import DefaultButton from "../Ui/DefaultButton";
+import toast from 'react-hot-toast';
 
 const WishlistItem = ({ product, index }) => {
   const { id, title, price, description, image } = product;
-  const { addToCart } = useCart();
-  const removeFromWishlistMutation = useRemoveFromWishlistMutation();
+  const dispatch = useDispatch();
   const [isRemoving, setIsRemoving] = useState(false);
 
   const handleAddToCart = () => {
-    addToCart(product);
+    dispatch(addToCart(product));
+    toast.success(`${title} added to cart!`, {
+      style: {
+        background: '#10B981',
+        color: '#fff',
+      },
+      icon: '🛒',
+    });
   };
 
   const handleRemoveFromWishlist = () => {
     setIsRemoving(true);
     setTimeout(() => {
-      removeFromWishlistMutation.mutate(id);
+      dispatch(removeFromWishlist(id));
+      toast.success(`${title} removed from wishlist!`, {
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+        icon: '💔',
+      });
     }, 300);
   };
 
@@ -31,35 +46,35 @@ const WishlistItem = ({ product, index }) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-  layout 
+  layout
   initial={{ opacity: 0, x: direction }}
-  animate={{ 
-              opacity: isRemoving ? 0 : 1, 
+  animate={{
+              opacity: isRemoving ? 0 : 1,
           x: isRemoving ? direction : 0,
           scale: isRemoving ? 0.8 : 1
   }}
-  exit={{ 
-    opacity: 0, 
-    x: direction, 
+  exit={{
+    opacity: 0,
+    x: direction,
     scale: 0.8,
-    height: 0,  
-    marginBottom: 0  
+    height: 0,
+    marginBottom: 0
   }}
-  transition={{ 
-    duration: 0.5, 
+  transition={{
+    duration: 0.5,
     ease: [0.43, 0.13, 0.23, 0.96],
-    delay: index * 0.1 
+    delay: index * 0.1
   }}
- 
+
         whileHover={{ y: -4 }}
         className="wishlist-item bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-gray-100 relative group"
       >
-        
+
         <div className="absolute inset-0 bg-linear-to-r from-blue-50/0 via-blue-50/50 to-blue-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-        
+
         <div className="flex items-center p-6 relative z-10">
-          
-          <motion.div 
+
+          <motion.div
             className="relative w-28 h-28 shrink-0 mr-6 overflow-hidden rounded-xl bg-gray-100"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
@@ -72,7 +87,7 @@ const WishlistItem = ({ product, index }) => {
               className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
               priority={false}
             />
-            
+
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -83,10 +98,10 @@ const WishlistItem = ({ product, index }) => {
             </motion.div>
           </motion.div>
 
-  
+
           <div className="grow min-w-0">
-            <motion.h3 
-              className="text-xl font-bold mb-2 text-gray-800 truncate pr-2" 
+            <motion.h3
+              className="text-xl font-bold mb-2 text-gray-800 truncate pr-2"
               title={title}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -94,8 +109,8 @@ const WishlistItem = ({ product, index }) => {
             >
               {title}
             </motion.h3>
-            
-            <motion.p 
+
+            <motion.p
               className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -103,7 +118,7 @@ const WishlistItem = ({ product, index }) => {
             >
               {description || "No description available."}
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -116,14 +131,14 @@ const WishlistItem = ({ product, index }) => {
             </motion.div>
           </div>
 
-  
-          <motion.div 
+
+          <motion.div
             className="flex items-center gap-3 ml-6"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 + 0.5 }}
           >
-  
+
             <motion.div
               whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(78, 197, 245, 0.4)" }}
               whileTap={{ scale: 0.95 }}
@@ -132,23 +147,24 @@ const WishlistItem = ({ product, index }) => {
                 backgroundColor: COLORS.primary,
                 color: COLORS.textLight,
               }}
-              
+
             >
               <DefaultButton
               className="py-3 px-6 rounded-xl flex items-center space-x-2  "
                onClick={handleAddToCart}
                >
-               
+
+
                 <ShoppingCart className="w-4 h-4" />
               <span className="hidden sm:inline">Add to Cart</span>
 
               </DefaultButton>
-              
+
             </motion.div>
 
-           
+
             <motion.button
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
                 rotate: [0, -10, 10, -10, 0],
                 transition: { duration: 0.5 }
@@ -159,7 +175,7 @@ const WishlistItem = ({ product, index }) => {
               aria-label="Remove from wishlist"
             >
               <div className="absolute inset-0 bg-linear-to-r from-red-600 to-pink-700 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-              
+
               <motion.div
                 className="relative z-10"
                 whileHover={{ rotate: 360 }}
@@ -192,4 +208,3 @@ const WishlistItem = ({ product, index }) => {
 };
 
 export default WishlistItem;
-

@@ -4,8 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ProductCard from '../../components/features/ProductCard';
-import { Upload, X, Check, AlertCircle } from 'lucide-react';
-import { useProducts } from '../../context/ProductContext';
+import { Upload, X, Check, AlertCircle, Plus } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectProducts, addProduct, updateProduct } from '../../store/slices/productSlice';
+import { selectCategories } from '../../store/slices/categorySlice';
 
 const ACCENT_COLOR = "#4EC5F5";
 const PILL_COLOR = "#FFFFFF";
@@ -16,15 +18,16 @@ const AddEditProductPage = () => {
   const searchParams = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true';
   const productId = searchParams.get('id');
-  const { categories, addProduct, updateProduct, getProductById } = useProducts();
+  const dispatch = useDispatch();
+  const products = useSelector(selectProducts);
+  const categories = useSelector(selectCategories);
 
-  const [apiCategories, setApiCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
-    price: '',
-    discount: '',
-    stock: '',
+    price: '0',
+    discount: '0',
+    stock: '0',
     description: '',
     images: [],
     active: true,
@@ -35,49 +38,25 @@ const AddEditProductPage = () => {
   const [toast, setToast] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Load categories from localStorage or use fallback
-  useEffect(() => {
-    try {
-      const savedCategories = localStorage.getItem('adminCategories');
-      if (savedCategories) {
-        setApiCategories(JSON.parse(savedCategories));
-      } else {
-        // Fallback categories
-        const fallbackCategories = [
-          { title: 'Living Room' },
-          { title: 'Bedroom' },
-          { title: 'Kitchen' },
-          { title: 'Dining Room' },
-          { title: 'Office' }
-        ];
-        setApiCategories(fallbackCategories);
-        localStorage.setItem('adminCategories', JSON.stringify(fallbackCategories));
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error);
-      setApiCategories([]);
-    }
-  }, []);
-
   useEffect(() => {
     if (isEdit && productId) {
-      const product = getProductById(productId);
+      const product = products.find(p => p.id == productId);
       if (product) {
         setFormData({
-          name: product.title,
-          category: product.category,
-          price: product.price.toString(),
+          name: product.title || product.name || '',
+          category: product.category || '',
+          price: product.price?.toString() || '0',
           discount: product.discount?.toString() || '0',
-          stock: product.stock.toString(),
-          description: product.description,
+          stock: product.stock?.toString() || '0',
+          description: product.description || '',
           images: product.image ? [{ url: product.image }] : [],
-          active: product.active,
+          active: product.active !== undefined ? product.active : true,
           featured: false, // Mock featured
         });
       }
       setLoading(false);
     }
-  }, [isEdit, productId, getProductById]);
+  }, [isEdit, productId, products]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -115,17 +94,28 @@ const AddEditProductPage = () => {
     handleImageUpload(files);
   };
 
+  const handleCreateCategory = () => {
+    router.push('/admin/categories');
+  };
+
   const handleSave = () => {
     const productData = {
-      ...formData,
+      id: isEdit ? productId : Date.now().toString(),
+      name: formData.name,
+      category: formData.category,
+      price: parseFloat(formData.price),
+      discount: parseFloat(formData.discount) || 0,
+      stock: parseInt(formData.stock),
+      description: formData.description,
       images: formData.images,
+      active: formData.active,
     };
 
     if (isEdit && productId) {
-      updateProduct(productId, productData);
+      dispatch(updateProduct({ id: productId, updatedProduct: productData }));
       setToast({ type: 'success', message: 'Product updated successfully!' });
     } else {
-      addProduct(productData);
+      dispatch(addProduct(productData));
       setToast({ type: 'success', message: 'Product added successfully!' });
     }
 
@@ -154,8 +144,6 @@ const AddEditProductPage = () => {
       </div>
     );
   }
-
-  const categoryOptions = apiCategories.map(cat => cat.title).filter((value, index, self) => self.indexOf(value) === index);
 
   return (
     <motion.div
@@ -203,17 +191,27 @@ const AddEditProductPage = () => {
                 <label className="block text-sm font-medium mb-2" style={{ color: TEXT_COLOR }}>
                   Category
                 </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border  text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                >
-                  <option value="">Select category</option>
-                  {categoryOptions.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
+                <div className="flex space-x-2">
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="flex-1 px-3 py-2 border  text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  >
+                    <option value="">Select category</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.title}>{cat.title}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleCreateCategory}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Manage</span>
+                  </button>
+                </div>
               </div>
 
               {/* Price and Discount */}

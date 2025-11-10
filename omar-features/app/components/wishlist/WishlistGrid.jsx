@@ -2,69 +2,16 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGetWishlistQuery } from "../../../lib/useWishlistMutations";
+import { useSelector } from 'react-redux';
+import { selectWishlist } from '../../store/slices/wishlistSlice';
 import WishlistItem from "./WishlistItem";
 import { Heart, Sparkles } from "lucide-react";
 import { COLORS } from "../constants/Colors";
 
 const WishlistGrid = () => {
-  const { data: wishlist, isLoading, error } = useGetWishlistQuery();
+  const wishlist = useSelector(selectWishlist);
 
-  if (isLoading) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex flex-col justify-center items-center py-16"
-      >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="relative"
-        >
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-[#4EC5F5] rounded-full" />
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <Heart className="w-6 h-6 text-[#4EC5F5] fill-[#4EC5F5]" />
-          </motion.div>
-        </motion.div>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 text-gray-600 font-medium"
-        >
-          Loading your wishlist...
-        </motion.p>
-      </motion.div>
-    );
-  }
-
-  if (error) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl shadow-lg mx-4"
-      >
-        <motion.div
-          animate={{ 
-            rotate: [0, -10, 10, -10, 0],
-          }}
-          transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
-        >
-          <Heart className="w-20 h-20 text-red-300 mb-6" />
-        </motion.div>
-        <h2 className="text-2xl font-bold text-red-600 mb-3">Error loading wishlist</h2>
-        <p className="text-gray-500 text-center max-w-md">
-          We couldn't load your wishlist. Please check your connection and try again.
-        </p>
-      </motion.div>
-    );
-  }
+  // No loading or error states needed for context-based wishlist
 
   if (!wishlist || wishlist.length === 0) {
     return (

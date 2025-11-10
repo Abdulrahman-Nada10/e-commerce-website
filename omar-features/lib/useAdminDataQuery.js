@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "./axiosInstance";
 import { AxiosRequestConfig } from "axios";
 
-const useGetDataQuery = ({ queryKey, url, config, refetchInterval }) => {
+const useAdminDataQuery = ({ queryKey, url, config, refetchInterval }) => {
     return useQuery({
         queryKey,
         queryFn: async () => {
@@ -17,4 +17,4 @@ const useGetDataQuery = ({ queryKey, url, config, refetchInterval }) => {
     });
 };
 
-export default useGetDataQuery;
+export default useAdminDataQuery;

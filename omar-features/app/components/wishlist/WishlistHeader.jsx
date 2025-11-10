@@ -4,11 +4,12 @@
 import React from "react";
 import { Heart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { useGetWishlistQuery } from "../../../lib/useWishlistMutations";
+import { useSelector } from 'react-redux';
+import { selectWishlist } from '../../store/slices/wishlistSlice';
 import { COLORS } from "../constants/Colors";
 
 const WishlistHeader = () => {
-  const { data: wishlist } = useGetWishlistQuery();
+  const wishlist = useSelector(selectWishlist);
   const wishlistItemCount = wishlist ? wishlist.length : 0;
 
   return (

@@ -7,22 +7,22 @@ import { gsap } from "gsap";
 import { ShoppingCart, User, Heart, Package } from "lucide-react";
 import MobileToggle from "../features/MobileToggle";
 import MobileMenu from "../features/MobileMenu";
-import { useCart } from "../../context/CartContext";
-import { useGetWishlistQuery } from "../../../lib/useWishlistMutations";
-import { useOrder } from "../../context/OrderContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCartItemCount } from '../../store/slices/cartSlice';
+import { selectWishlistItemCount } from '../../store/slices/wishlistSlice';
+import { selectOrders } from '../../store/slices/orderSlice';
 
 // Nav items
 const navItems = [
-  { name: "Products", href: "/Products" },
+  { name: "Products", href: "/products" },
   { name: "Categories", href: "/categories" },
   { name: "About", href: "/about" },
   { name: "Contact Us", href: "/contactus" },
   { name: "Help", href: "/help" },
-
 ];
 
-// NavLink component
-const NavLink = ({ href, children }) => {
+// NavLink component with pill hover effect
+const NavLink = ({ href, children, index }) => {
   const linkRef = useRef(null);
   const circleRef = useRef(null);
   const labelRef = useRef(null);
@@ -33,6 +33,7 @@ const NavLink = ({ href, children }) => {
   const baseColor = "#4EC5F5";
   const pillColor = "#ffffff";
   const textColor = "#060010";
+  const ease = 'power3.easeOut';
 
   const calculatePillDimensions = () => {
     const pill = linkRef.current;
@@ -41,7 +42,6 @@ const NavLink = ({ href, children }) => {
 
     const rect = pill.getBoundingClientRect();
     const { width: w, height: h } = rect;
-
     const R = ((w * w) / 4 + h * h) / (2 * h);
     const D = Math.ceil(2 * R) + 2;
     const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
@@ -55,21 +55,28 @@ const NavLink = ({ href, children }) => {
       xPercent: -50,
       scale: 0,
       transformOrigin: `50% ${originY}px`,
+      backgroundColor: baseColor,
     });
 
     const label = labelRef.current;
     const hoverLabel = hoverLabelRef.current;
 
-    if (label) gsap.set(label, { y: 0 });
-    if (hoverLabel) gsap.set(hoverLabel, { y: h + 12, opacity: 0 });
+    if (label) gsap.set(label, { y: 0, color: textColor });
+    if (hoverLabel) gsap.set(hoverLabel, { y: h + 12, opacity: 0, color: pillColor });
 
     tlRef.current?.kill();
     const tl = gsap.timeline({ paused: true });
 
-    tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease: "power3.easeOut" }, 0);
-    if (label) tl.to(label, { y: -(h + 8), duration: 2, ease: "power3.easeOut" }, 0);
-    if (hoverLabel)
-      tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease: "power3.easeOut" }, 0);
+    tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease, overwrite: 'auto' }, 0);
+
+    if (label) {
+      tl.to(label, { y: -(h + 8), color: pillColor, duration: 2, ease, overwrite: 'auto' }, 0);
+    }
+
+    if (hoverLabel) {
+      gsap.set(hoverLabel, { y: Math.ceil(h + 100), opacity: 0 });
+      tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease, overwrite: 'auto' }, 0);
+    }
 
     tlRef.current = tl;
   };
@@ -77,22 +84,30 @@ const NavLink = ({ href, children }) => {
   useEffect(() => {
     calculatePillDimensions();
     const onResize = () => calculatePillDimensions();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const handleEnter = () => {
     const tl = tlRef.current;
     if (!tl) return;
     activeTweenRef.current?.kill();
-    activeTweenRef.current = tl.tweenTo(tl.duration(), { duration: 0.7, ease: "power3.easeOut" });
+    activeTweenRef.current = tl.tweenTo(tl.duration(), {
+      duration: 0.7,
+      ease,
+      overwrite: 'auto'
+    });
   };
 
   const handleLeave = () => {
     const tl = tlRef.current;
     if (!tl) return;
     activeTweenRef.current?.kill();
-    activeTweenRef.current = tl.tweenTo(0, { duration: 0.4, ease: "power3.easeOut" });
+    activeTweenRef.current = tl.tweenTo(0, {
+      duration: 0.4,
+      ease,
+      overwrite: 'auto'
+    });
   };
 
   const pillStyle = {
@@ -138,57 +153,49 @@ const NavLink = ({ href, children }) => {
   );
 };
 
+// IconButton component
+const IconButton = ({ ariaLabel, children }) => {
+  return (
+    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+      {children}
+    </div>
+  );
+};
+
 // NavBar component
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
-  const { cartItemCount } = useCart();
-  const { orders } = useOrder();
-  const { data: wishlist } = useGetWishlistQuery();
-  const wishlistItemCount = wishlist ? wishlist.length : 0;
+  const cartItemCount = useSelector(selectCartItemCount);
+  const wishlistItemCount = useSelector(selectWishlistItemCount);
+  const ordersCount = useSelector(selectOrders).length;
   const baseColor = "#4EC5F5";
-  const ordersCount = orders.length;
-
-  useEffect(() => {
-    const navEl = navRef.current;
-    if (navEl) {
-      gsap.from(navEl, { opacity: 0, y: -50, duration: 1, ease: "power3.out" });
-    }
-  }, []);
-
-  const IconButton = ({ children, ariaLabel, className = "" }) => (
-    <button
-      className={`p-2 rounded-full transition-colors hover:bg-gray-100 focus:outline-none ${className}`}
-      aria-label={ariaLabel}
-    >
-      {children}
-    </button>
-  );
 
   return (
     <>
-      <nav ref={navRef} className="fixed top-0 left-0 w-full bg-white shadow-md z-40">
+      <nav ref={navRef} className="fixed top-0 left-0 w-full bg-white shadow-md z-50" style={{ backgroundColor: 'white', opacity: 1, visibility: 'visible' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="shrink-0 order-1 md:order-0">
+            {/* Logo */}
+            <div className="shrink-0">
               <Link href="/" className="text-2xl font-extrabold tracking-wider" style={{ color: baseColor }}>
                 Shopylx
               </Link>
             </div>
 
-            <div className="hidden md:flex grow justify-center space-x-0 ml-2 rounded-[27px] overflow-hidden" style={{ height: "48px", background: "#ffffff" }}>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex grow justify-center space-x-0 ml-2 rounded-[27px] overflow-hidden" style={{ height: "48px", background: "#ffffff" }}>
               <div className="list-none flex items-stretch m-0 p-[3px] h-full" style={{ gap: "3px" }}>
-                {navItems.map((item) => (
-                  <NavLink key={item.name} href={item.href}>
+                {navItems.map((item, index) => (
+                  <NavLink key={item.name} href={item.href} index={index}>
                     {item.name}
                   </NavLink>
                 ))}
               </div>
             </div>
 
-            <div className="flex items-center space-x-1 order-2 md:order-0">
-              
-
+            {/* Icons */}
+            <div className="flex items-center space-x-1">
               <IconButton ariaLabel="Cart">
                 <Link href="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5 text-gray-700 transition-colors hover:text-indigo-600" />
@@ -228,7 +235,8 @@ const NavBar = () => {
                 </Link>
               </IconButton>
 
-              <div className="md:hidden ml-2">
+              {/* Mobile Menu Toggle */}
+              <div className="lg:hidden ml-2">
                 <MobileToggle isOpen={isMobileMenuOpen} toggleOpen={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
               </div>
             </div>

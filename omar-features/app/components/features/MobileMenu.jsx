@@ -7,18 +7,17 @@ import { gsap } from "gsap";
 import MobileToggle from "./MobileToggle";
 
 const navItems = [
-  { name: "Products", href: "/Products" },
+  { name: "Products", href: "/products" },
   { name: "Categories", href: "/categories" },
   { name: "About", href: "/about" },
   { name: "Contact Us", href: "/contactus" },
   { name: "Help", href: "/help" },
-
-
 ];
 
 const baseColor = "#4EC5F5";
 const textColor = "#060010";
 const hoverTextColor = "#060010";
+
 const MobileNavLink = ({ href, children, closeMenu }) => {
   const linkRef = useRef(null);
   const circleRef = useRef(null);
@@ -51,7 +50,7 @@ const MobileNavLink = ({ href, children, closeMenu }) => {
       xPercent: -50,
       yPercent: -50,
       transformOrigin: "center center",
-      zIndex: 1, 
+      zIndex: 1,
     });
 
     const linkHeight = h;
@@ -75,7 +74,7 @@ const MobileNavLink = ({ href, children, closeMenu }) => {
     if (!tl) return;
     activeTweenRef.current?.kill();
     activeTweenRef.current = tl.tweenTo(tl.duration(), {
-      duration: 1.2,
+      duration: 2.2,
       ease: "power2.out",
     });
   };
@@ -93,7 +92,7 @@ const MobileNavLink = ({ href, children, closeMenu }) => {
   const handleClick = () => {
     const tl = tlRef.current;
     if (tl) {
-      tl.tweenTo(tl.duration(), { duration: 0.1, onComplete: closeMenu });
+      tl.tweenTo(tl.duration(), { duration: 0.9, onComplete: closeMenu });
     } else {
       closeMenu();
     }
@@ -133,7 +132,7 @@ const MobileNavLink = ({ href, children, closeMenu }) => {
           className="absolute rounded-full pointer-events-none z-10"
           style={{
             background: baseColor,
-            mixBlendMode: "multiply", 
+            mixBlendMode: "multiply",
             willChange: "transform",
           }}
           aria-hidden="true"
@@ -142,7 +141,6 @@ const MobileNavLink = ({ href, children, closeMenu }) => {
     </li>
   );
 };
-
 
 const MobileMenu = ({ isOpen, setIsOpen, ease = "power3.out" }) => {
   const menuRef = useRef(null);
@@ -210,8 +208,7 @@ const MobileMenu = ({ isOpen, setIsOpen, ease = "power3.out" }) => {
               top-16
               right-0
               h-[calc(100vh-4rem)]
-              w-[90%]
-              xs:w-[60%]
+              w-full
               sm:w-[70%]
               md:w-[45%]
               lg:w-[35%]

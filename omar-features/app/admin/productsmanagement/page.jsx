@@ -3,7 +3,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProducts } from '../../context/ProductContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectProducts } from '../../store/slices/productSlice';
+import { deleteProduct, updateProduct } from '../../store/slices/productSlice';
 import { Search, Plus, Edit, Trash2, Eye, EyeOff, Percent } from 'lucide-react';
 
 const ACCENT_COLOR = "#4EC5F5";
@@ -11,13 +13,14 @@ const TEXT_COLOR = "#060010";
 
 const ProductsListPage = () => {
   const router = useRouter();
-  const { products, deleteProduct, updateProduct } = useProducts();
+  const dispatch = useDispatch();
+  const products = useSelector(selectProducts);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (product.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (product.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     const matchesCategory = !categoryFilter || product.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -34,14 +37,14 @@ const ProductsListPage = () => {
 
   const handleDeleteProduct = (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      deleteProduct(id);
+      dispatch(deleteProduct(id));
     }
   };
 
   const toggleStatus = (id) => {
     const product = products.find(p => p.id === id);
     if (product) {
-      updateProduct(id, { ...product, active: !product.active });
+      dispatch(updateProduct({ id, updatedProduct: { ...product, active: !product.active } }));
     }
   };
 
@@ -50,7 +53,7 @@ const ProductsListPage = () => {
     if (product) {
       // Simply toggle between 0 and 20% discount
       const newDiscount = product.discount > 0 ? 0 : 20;
-      updateProduct(id, { ...product, discount: newDiscount });
+      dispatch(updateProduct({ id, updatedProduct: { ...product, discount: newDiscount } }));
     }
   };
 
@@ -130,7 +133,7 @@ const ProductsListPage = () => {
                         />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium" style={{ color: TEXT_COLOR }}>{product.title}</div>
+                        <div className="text-sm font-medium" style={{ color: TEXT_COLOR }}>{product.title || product.name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">{product.category}</div>

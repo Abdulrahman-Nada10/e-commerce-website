@@ -1,18 +1,23 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useOrder } from '../context/OrderContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectOrders, syncOrdersFromAPI } from '../store/slices/orderSlice';
+import { useOrdersQuery } from '../../lib/useProductsQuery';
 
 const OrdersPage = () => {
-  const { getUserOrders } = useOrder();
-  const [userOrders, setUserOrders] = useState([]);
+  const userOrders = useSelector(selectOrders);
+  const dispatch = useDispatch();
 
+  // Fetch orders from API with periodic updates
+  const { data: apiOrders } = useOrdersQuery();
+
+  // Sync API data with Redux store
   useEffect(() => {
-    // For demo purposes, using a mock user ID. In a real app, this would come from authentication
-    const userId = 'user1';
-    const orders = getUserOrders(userId);
-    setUserOrders(orders);
-  }, [getUserOrders]);
+    if (apiOrders) {
+      dispatch(syncOrdersFromAPI(apiOrders));
+    }
+  }, [apiOrders, dispatch]);
 
   const getStatusColor = (status) => {
     switch (status) {
