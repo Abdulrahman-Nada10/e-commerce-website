@@ -22,7 +22,7 @@ namespace AuthServices.Api.Controllers
             this.roleManager = roleManager;
             this.appContext = appContext;
         }
-        [HttpPost("addrole")]
+        [HttpPost("add-role")]
         public async Task<IActionResult> AddRole([FromBody] AddRoleRequest request)
         {
             if (!ModelState.IsValid)
@@ -37,9 +37,7 @@ namespace AuthServices.Api.Controllers
             return Ok(new { Message = "Role created successfully!" });
         }
 
-
-
-        [HttpGet("GetALLusers")]
+        [HttpGet("get-all-users")]
         public async Task<IActionResult> GetALLUsers()
         {
             var user = await userManager.Users.Select(u => new
@@ -54,7 +52,8 @@ namespace AuthServices.Api.Controllers
             }).ToListAsync();
             return Ok(user);
         }
-        [HttpPost("setrole")]
+
+        [HttpPost("set-role")]
         public async Task<IActionResult> SetRole([FromBody] SetRoleReques request)
         {
             if (!ModelState.IsValid)
@@ -71,9 +70,9 @@ namespace AuthServices.Api.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
             return Ok(new { Message = "Role assigned to user successfully!" });
-
         }
-        [HttpPost("ToggleUserStatus")]
+
+        [HttpPost("toggle-user-status")]
         public async Task<IActionResult> ToggleUserStatus([FromBody] SetActiveUser activeUser)
         {
             if (!ModelState.IsValid)
@@ -92,7 +91,8 @@ namespace AuthServices.Api.Controllers
             return Ok(new { Message = "User active status updated successfully!" });
 
         }
-        [HttpPost("addPermission")]
+
+        [HttpPost("add-permession")]
         public async Task<IActionResult> AddPermission([FromBody] UserPermission request)
         {
             var user = await userManager.FindByEmailAsync(request.UserId);
@@ -106,27 +106,24 @@ namespace AuthServices.Api.Controllers
                 return BadRequest(result.Errors);
 
             return Ok(new { Message = "Role created successfully!" });
-
-        
-    }
+        }
 
 
-[HttpPost("RemovePermission")]
-public async Task<IActionResult> RemovePermission([FromBody] UserPermission request)
+        [HttpPost("remove-permession")]
+        public async Task<IActionResult> RemovePermission([FromBody] UserPermission request)
 
-{
-    var user = await userManager.FindByEmailAsync(request.Email);
-    if (user == null)
-        return NotFound(new { Message = ("User not found") });
-    var Permission = await appContext.userPermissions.FirstOrDefaultAsync(p => p.UserId==user.Id&&p.PermissionName==request.PermissionName);
+        {
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+                return NotFound(new { Message = ("User not found") });
+            var Permission = await appContext.userPermissions.FirstOrDefaultAsync(p => p.UserId == user.Id && p.PermissionName == request.PermissionName);
 
 
-            if(Permission== null)
+            if (Permission == null)
                 return NotFound("Permission not found for this user");
             appContext.userPermissions.Remove(Permission);
             await appContext.SaveChangesAsync();
             return Ok(new { Message = "Permission removed successfully " });
-
         }
     }
 
