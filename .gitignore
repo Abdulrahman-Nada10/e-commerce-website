@@ -4,3 +4,7 @@
 
 /.vs
 /.gitignore
+/CatalogService.Api/obj
+/GlobalResponse.Shared/bin/Debug/net8.0
+/GlobalResponse.Shared/obj
+/CatalogService.Api/bin/Debug/net8.0

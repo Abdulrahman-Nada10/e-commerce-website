@@ -8,7 +8,6 @@ public class ApiResponse<T>
     public List<string>? Errors { get; set; }
     public int StatusCode { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    public string? TraceId { get; set; }
 
     // Success Response
     public static ApiResponse<T> SuccessResponse(T data, string message = "Success", int statusCode = 200)

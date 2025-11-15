@@ -4,7 +4,7 @@ public class PagedResponse<T>
 {
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;
-    public List<T>? Data { get; set; }
+    public IEnumerable<T>? Data { get; set; }
     public int TotalRecords { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
@@ -13,7 +13,7 @@ public class PagedResponse<T>
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     public static PagedResponse<T> SuccessResponse(
-        List<T> data,
+        IEnumerable<T> data,
         int totalRecords,
         int pageNumber,
         int pageSize,

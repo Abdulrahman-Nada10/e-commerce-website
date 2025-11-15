@@ -1,87 +1,112 @@
-﻿using CatalogService.Api.DTOs;
+﻿using CatalogService.Api.DTOs.Categories;
 using CatalogService.Api.Services;
-using Microsoft.AspNetCore.Mvc;
+using CatalogService.Api.Services.Categories;
 using GlobalResponse.Shared.Extensions;
-using GlobalResponse.Shared.Models;
-using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+namespace CatalogService.Api.Controllers;
 
-namespace CatalogService.Api.Controllers
+[ApiController]
+[Route("api/[controller]")]
+[Produces("application/json")]
+public class CategoriesController(ICategoryService categoryService, LocalizedMessageService messageService) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Produces("application/json")]
-    public class CategoriesController(ICategoryService categoryService, ILogger<CategoriesController> logger) : ControllerBase
+    private readonly ICategoryService _categoryService = categoryService;
+    private readonly LocalizedMessageService _messageService = messageService;
+
+    [HttpGet]
+    public async Task<IActionResult> GetListAsync(string languageCode = "en", string? search = null, bool? isActive = null)
     {
-        private readonly ICategoryService _categoryService = categoryService;
-        private readonly ILogger<CategoriesController> _logger = logger;
-
-        /// <summary>
-        /// Get all categories with optional filters
-        /// </summary>
-        /// <param name="languageCode">Language code (default: en)</param>
-        /// <param name="search">Search term for category title</param>
-        /// <param name="isActive">Filter by active status</param>
-        /// <returns>List of categories</returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<List<CategoryDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCategories(
-            [FromQuery] string languageCode = "en",
-            [FromQuery] string? search = null,
-            [FromQuery] bool? isActive = null)
+        try
         {
-            try
-            {
-                _logger.LogInformation(
-                    "Fetching categories with language: {LanguageCode}, search: {Search}, isActive: {IsActive}",
-                    languageCode, search, isActive);
+            var categories = await _categoryService.GetListAsync(languageCode, search, isActive);
 
-                var categories = await _categoryService.GetCategoriesAsync(
-                    languageCode,
-                    search,
-                    isActive);
+            if (categories == null || !categories.Any())
+                return this.NotFoundResponse<object>(await _messageService.GetMessageAsync("CATEGORY_NOT_FOUND", languageCode));
 
-                if (categories == null || !categories.Any())
-                {
-                    return ApiResponse<List<CategoryDto>>
-                        .NotFoundResponse("No categories found")
-                        .WithTraceId(HttpContext)
-                        .ToActionResult();
-                }
+            return this.OkResponse(categories, await _messageService.GetMessageAsync("CATEGORIES_FETCH_SUCCESS", languageCode));
+        }
+        catch (Exception ex)
+        {
+            return this.BadRequestResponse<object>($"{await _messageService.GetMessageAsync("SERVER_ERROR", languageCode)}: {ex.Message}");
+        }
+    }
 
-                var response = ApiResponse<List<CategoryDto>>
-                    .SuccessResponse(
-                        categories,
-                        $"Retrieved {categories.Count} categories successfully")
-                    .WithTraceId(HttpContext);
+    //[HttpGet("{categoryID:int}")]
+    //public async Task<IActionResult> GetByIdAsync(int categoryID, string languageCode = "en")
+    //{
+    //    try
+    //    {
+    //        var category = await _categoryService.GetByIdAsync(categoryID, languageCode);
 
-                return response.ToActionResult();
-            }
-            catch (SqlException sqlEx)
-            {
-                _logger.LogError(sqlEx, "Database error occurred while fetching categories");
+    //        if (category == null)
+    //            return this.NotFoundResponse<object>(await _messageService.GetMessageAsync("CATEGORY_NOT_FOUND", languageCode));
 
-                return ApiResponse<List<CategoryDto>>
-                    .ErrorResponse(
-                        "Database error occurred",
-                        new List<string> { sqlEx.Message },
-                        500)
-                    .WithTraceId(HttpContext)
-                    .ToActionResult();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error occurred while fetching categories");
+    //        return this.OkResponse(category, await _messageService.GetMessageAsync("CATEGORIES_FETCH_SUCCESS", languageCode));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return this.BadRequestResponse<object>($"{await _messageService.GetMessageAsync("SERVER_ERROR", languageCode)}: {ex.Message}");
+    //    }
+    //}
 
-                return ApiResponse<List<CategoryDto>>
-                    .ErrorResponse(
-                        "An unexpected error occurred",
-                        new List<string> { ex.Message },
-                        500)
-                    .WithTraceId(HttpContext)
-                    .ToActionResult();
-            }
+    [HttpPost("Create")]
+    public async Task<IActionResult> CreateAsync([FromHeader] string userID, [FromBody] CategoryCreateDto dto, string languageCode = "en")
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(userID))
+                userID = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip";
+
+            var result = await _categoryService.CreateAsync(userID, dto, languageCode);
+
+            if (result <= 0)
+                return this.BadRequestResponse<object>(await _messageService.GetMessageAsync("OPERATION_FAILED", languageCode));
+
+            return this.OkResponse(result, await _messageService.GetMessageAsync("CATEGORY_CREATED", languageCode));
+        }
+        catch (Exception ex)
+        {
+            return this.BadRequestResponse<object>($"{await _messageService.GetMessageAsync("SERVER_ERROR", languageCode)}: {ex.Message}");
+        }
+    }
+
+    [HttpPut("Update")]
+    public async Task<IActionResult> UpdateAsync([FromHeader] string userID, [FromBody] CategoryUpdateDto dto, string languageCode = "en")
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(userID))
+                userID = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip";
+
+            var result = await _categoryService.UpdateAsync(userID, dto, languageCode);
+
+            if (result <= 0)
+                return this.BadRequestResponse<object>(await _messageService.GetMessageAsync("OPERATION_FAILED", languageCode));
+
+            return this.OkResponse(result, await _messageService.GetMessageAsync("CATEGORY_UPDATED", languageCode));
+        }
+        catch (Exception ex)
+        {
+            return this.BadRequestResponse<object>($"{await _messageService.GetMessageAsync("SERVER_ERROR", languageCode)}: {ex.Message}");
+        }
+    }
+
+    [HttpPatch("Delete/{categoryID:int}")]
+    public async Task<IActionResult> SetActiveAsync([FromHeader] string userID, int categoryID, bool isActive, string languageCode = "en")
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(userID))
+                userID = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip";
+
+            await _categoryService.SetActiveAsync(userID, categoryID, isActive, languageCode);
+
+            return this.OkResponse<object>(null!, await _messageService.GetMessageAsync("CATEGORY_DELETED", languageCode)
+            );
+        }
+        catch (Exception ex)
+        {
+            return this.BadRequestResponse<object>($"{await _messageService.GetMessageAsync("SERVER_ERROR", languageCode)}: {ex.Message}");
         }
     }
 }
