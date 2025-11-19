@@ -44,7 +44,7 @@ namespace CatalogService.Api.Services.RelatedProducts
             }
         }
 
-        public async Task<IEnumerable<RelatedDto>> GeListAsync(string languageCode, string? search = null, bool? isActive = null)
+        public async Task<IEnumerable<RelatedDto>> GetListAsync(string languageCode, string? search = null, bool? isActive = null)
         {
             try
             {

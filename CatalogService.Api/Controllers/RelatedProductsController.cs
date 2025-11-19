@@ -19,7 +19,7 @@ namespace CatalogService.Api.Controllers
         {
             try
             {
-                var categories = await _relatedProdService.GeListAsync(languageCode, search, isActive);
+                var categories = await _relatedProdService.GetListAsync(languageCode, search, isActive);
 
                 if (categories == null || !categories.Any())
                     return this.NotFoundResponse<object>(await _messageService.GetMessageAsync("RELATED_PRODUCT_NOT_FOUND", languageCode));
@@ -84,8 +84,7 @@ namespace CatalogService.Api.Controllers
 
                 await _relatedProdService.SetActiveAsync(userID, relatedProdID, isActive);
 
-                return this.OkResponse<object>(null!, await _messageService.GetMessageAsync("RELATED_PRODUCT_DELETED", languageCode)
-                );
+                return this.OkResponse<object>(null!, await _messageService.GetMessageAsync("RELATED_PRODUCT_DELETED", languageCode));
             }
             catch (Exception ex)
             {
