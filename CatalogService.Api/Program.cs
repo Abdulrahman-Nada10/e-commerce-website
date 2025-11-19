@@ -4,6 +4,7 @@ using CatalogService.Api.Services.Categories;
 using CatalogService.Api.Services.Products;
 using CatalogService.Api.Services.RelatedProducts;
 using CatalogService.Api.Services.Translations;
+using CatalogService.Api.Services.Wishlists;
 using GlobalResponse.Shared;
 using System.Threading.RateLimiting;
 
@@ -56,6 +57,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRelatedProdService, RelatedProdService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 builder.Services.AddScoped<LocalizedMessageService>();

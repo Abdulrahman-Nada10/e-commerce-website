@@ -17,18 +17,18 @@ namespace CatalogService.Api.Services.Wishlists
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration");
         }
 
-        public async Task<long> AddAsync(string userId, WishListCreateDto dto)
+        public async Task<long> AddAsync(string UserID, WishListCreateDto dto, string languageCode)
         {
             try
             {
                 using var connection = new SqlConnection(_connectionString);
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@UserId", userId);
+                parameters.Add("@UserId", UserID);
                 parameters.Add("@ProductId", dto.ProductId);
                 parameters.Add("@IsActive", dto.IsActive);
                 parameters.Add("@DisplayOrder", dto.DisplayOrder);
-                parameters.Add("@LanguageCode", dto.LanguageCode);
+                parameters.Add("@LanguageCode", languageCode);
 
                 return await connection.ExecuteScalarAsync<long>(
                     "dbo.sp_WishList_Create",

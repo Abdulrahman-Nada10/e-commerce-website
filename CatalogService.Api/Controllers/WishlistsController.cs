@@ -14,16 +14,14 @@ namespace CatalogService.Api.Controllers
         private readonly LocalizedMessageService _messageService = messageService;
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add([FromBody] WishListCreateDto dto, string languageCode = "en")
+        public async Task<IActionResult> Add([FromBody] WishListCreateDto dto, [FromQuery] string userID,  string languageCode = "en")
         {
             try
             {
-                var userId = User?.Identity?.Name ?? HttpContext.Items["UserId"]?.ToString();
-
-                if (userId == null)
+                if (userID == null)
                     return this.UnauthorizedResponse<object>(await _messageService.GetMessageAsync("USER_NOT_FOUND", languageCode));
 
-                var id = await _wishListService.AddAsync(userId, dto);
+                var id = await _wishListService.AddAsync(userID, dto, languageCode);
 
                 return this.OkResponse(new { WishListID = id }, await _messageService.GetMessageAsync("WISHLIST_ITEM_ADDED", languageCode));
             }
@@ -34,16 +32,14 @@ namespace CatalogService.Api.Controllers
         }
 
         [HttpGet("my")]
-        public async Task<IActionResult> GetMyWishList([FromQuery] string languageCode = "en")
+        public async Task<IActionResult> GetMyWishList([FromQuery] string userID, [FromQuery] string languageCode = "en")
         {
             try
             {
-                var userId = User?.Identity?.Name ?? HttpContext.Items["UserId"]?.ToString();
-
-                if (userId == null)
+                if (userID == null)
                     return this.UnauthorizedResponse<object>(await _messageService.GetMessageAsync("USER_NOT_FOUND", languageCode));
 
-                var items = await _wishListService.GetByUserAsync(userId, languageCode);
+                var items = await _wishListService.GetByUserAsync(userID, languageCode);
 
                 return this.OkResponse(items, await _messageService.GetMessageAsync("WISHLIST_FETCH_SUCCESS", languageCode));
             }
@@ -54,16 +50,14 @@ namespace CatalogService.Api.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(long id, [FromQuery] string languageCode = "en")
+        public async Task<IActionResult> Delete(long id, [FromQuery] string userID, [FromQuery] string languageCode = "en")
         {
             try
             {
-                var userId = User?.Identity?.Name ?? HttpContext.Items["UserId"]?.ToString();
+                if (userID == null)
+                    return this.UnauthorizedResponse<object>(await _messageService.GetMessageAsync("USER_NOT_FOUND", languageCode));
 
-                if (userId == null)
-                    return Unauthorized("User not found.");
-
-                await _wishListService.DeleteAsync(userId, id, languageCode);
+                await _wishListService.DeleteAsync(userID, id, languageCode);
 
                 return this.OkResponse<object>(null!, await _messageService.GetMessageAsync("WISHLIST_ITEM_REMOVED", languageCode));
             }
