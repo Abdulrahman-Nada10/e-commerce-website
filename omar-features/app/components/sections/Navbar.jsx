@@ -170,9 +170,23 @@ const NavBar = () => {
   const ordersCount = useSelector(selectOrders).length;
   const baseColor = "#4EC5F5";
 
+useEffect(()=> {
+  if(navRef.current){
+    gsap.set(navRef.current,{y:-100 , opacity :0});
+    gsap.to(navRef.current,{
+      y:0,
+      opacity:1,
+      duration:1,
+      ease:"power2.out",
+    });
+  }
+},[]);
+
   return (
     <>
-      <nav ref={navRef} className="fixed top-0 left-0 w-full bg-white shadow-md z-50" style={{ backgroundColor: 'white', opacity: 1, visibility: 'visible' }}>
+      <nav ref={navRef}
+       className="fixed top-0 left-0 w-full bg-white shadow-md z-50" 
+       style={{ backgroundColor: 'white', opacity: 1, visibility: 'visible' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
